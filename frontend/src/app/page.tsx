@@ -164,18 +164,16 @@ export default function Home() {
           <thead>
             <tr className="border-b border-neutral-100 bg-neutral-50">
               <th className="px-3 py-1.5 text-left text-xs font-medium text-neutral-400">Name</th>
-              <th className="px-3 py-1.5 text-right text-xs font-medium text-neutral-400 w-20">Temp</th>
+              <th className="px-3 py-1.5 text-right text-xs font-medium text-neutral-400 w-20">Avg Temp</th>
               <th className="px-3 py-1.5 text-right text-xs font-medium text-neutral-400 w-36">Status</th>
             </tr>
           </thead>
           <tbody>
             {sortedStations.map((s) => {
-              const stationInsights = insightMap[s.station_id];
-              const todayInsight = stationInsights?.[1];
-              const windowInsight = stationInsights?.[selectedWindow];
+              const windowInsight = insightMap[s.station_id]?.[selectedWindow];
               const display = windowInsight ? getSeverityDisplay(windowInsight) : null;
-              const tempF = todayInsight?.value != null
-                ? celsiusToFahrenheit(todayInsight.value)
+              const tempF = windowInsight?.value != null
+                ? celsiusToFahrenheit(windowInsight.value)
                 : null;
 
               return (
