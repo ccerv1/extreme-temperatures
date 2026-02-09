@@ -30,9 +30,9 @@ const SEVERITY_LABELS: Record<string, Record<string, { label: string; className:
 };
 
 const WINDOW_OPTIONS = [
-  { days: 7, label: "7d" },
-  { days: 14, label: "14d" },
-  { days: 30, label: "30d" },
+  { days: 7, label: "Past 7 days" },
+  { days: 14, label: "Past 14 days" },
+  { days: 30, label: "Past 30 days" },
 ];
 
 // Lower = more extreme = sort first
@@ -98,7 +98,13 @@ export default function Home() {
       const sevB = SEVERITY_SORT_ORDER[insB.severity] ?? 5;
       if (sevA !== sevB) return sevA - sevB;
 
-      // Within same severity, sort by percentile distance from 50 (more extreme first)
+      // Within same severity, group cold then warm
+      const dirOrder = (d: string) => d === "cold" ? 0 : d === "warm" ? 1 : 2;
+      const dirA = dirOrder(insA.direction);
+      const dirB = dirOrder(insB.direction);
+      if (dirA !== dirB) return dirA - dirB;
+
+      // Within same severity+direction, sort by percentile distance from 50 (more extreme first)
       const distA = insA.percentile != null ? Math.abs(insA.percentile - 50) : 0;
       const distB = insB.percentile != null ? Math.abs(insB.percentile - 50) : 0;
       return distB - distA;
@@ -128,7 +134,7 @@ export default function Home() {
           Tempercentiles
         </h1>
         <p className="mt-1 text-sm text-neutral-500">
-          Daily temperatures in historical context for 50 US cities
+          How unusual are current temperatures? Each station is compared against its own historical record, updated daily.
         </p>
       </div>
 
@@ -192,7 +198,7 @@ export default function Home() {
                 href={`/station/${s.station_id}`}
                 className="flex items-center rounded-lg px-3 py-2.5 hover:bg-neutral-50 transition-colors group"
               >
-                <span className="flex-1 font-medium group-hover:text-blue-600 transition-colors truncate">
+                <span className="flex-1 font-medium text-neutral-900 underline decoration-neutral-300 decoration-dashed underline-offset-2 group-hover:text-blue-600 group-hover:decoration-blue-400 transition-colors truncate">
                   {s.name}
                 </span>
                 <span className="w-20 text-right text-sm tabular-nums text-neutral-600">

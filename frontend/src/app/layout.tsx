@@ -9,7 +9,7 @@ const geist = Geist({
 
 export const metadata: Metadata = {
   title: "Tempercentiles",
-  description: "Daily temperatures in historical context for 50 US cities",
+  description: "How unusual are current temperatures? Each station compared against its own historical record, updated daily.",
 };
 
 export default function RootLayout({
