@@ -6,12 +6,12 @@ function celsiusToFahrenheit(c: number): number {
 
 function periodLabel(windowDays: number): string {
   if (windowDays === 1) return "day";
-  if (windowDays <= 3) return `${windowDays} days`;
-  if (windowDays <= 7) return "week";
-  if (windowDays <= 14) return "two weeks";
-  if (windowDays <= 30) return "month";
-  if (windowDays <= 90) return "quarter";
-  return "period";
+  if (windowDays === 7) return "week";
+  if (windowDays === 14) return "two-week period";
+  if (windowDays === 30) return "month";
+  if (windowDays === 90) return "quarter";
+  if (windowDays === 365) return "year";
+  return `${windowDays}-day period`;
 }
 
 function daysLabel(windowDays: number): string {
