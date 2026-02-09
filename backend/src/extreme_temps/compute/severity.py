@@ -1,9 +1,9 @@
 """Severity classification based on percentile thresholds.
 
 Implements the PRD severity classification:
-    Normal:       25th-75th percentile
-    Unusual:      10th-25th or 75th-90th
-    Very Unusual: 2nd-10th or 90th-98th
+    Normal:       >25th to <75th percentile
+    Unusual:      >=10th to <=25th or >=75th to <=90th
+    Very Unusual: >=2nd to <=10th or >=90th to <=98th
     Extreme:      <2nd or >98th
 """
 
@@ -30,19 +30,27 @@ class Direction(str, Enum):
     NEUTRAL = "neutral"
 
 
+MIN_COVERAGE_RATIO = 0.5
+
+
 def classify_severity(
     percentile: float,
     coverage_years: int | None = None,
     min_years: int = MIN_COVERAGE_YEARS,
+    coverage_ratio: float | None = None,
 ) -> Severity:
     """Classify severity from a percentile value (0-100).
 
-    If coverage_years < min_years, downgrade by one level.
+    Downgrade by one level if:
+    - coverage_years < min_years (short history), or
+    - coverage_ratio < MIN_COVERAGE_RATIO (sparse window data).
     """
+    raw = _raw_severity(percentile)
     if coverage_years is not None and coverage_years < min_years:
-        raw = _raw_severity(percentile)
-        return _downgrade(raw)
-    return _raw_severity(percentile)
+        raw = _downgrade(raw)
+    if coverage_ratio is not None and coverage_ratio < MIN_COVERAGE_RATIO:
+        raw = _downgrade(raw)
+    return raw
 
 
 def classify_direction(
@@ -68,9 +76,9 @@ def classify_direction(
 def _raw_severity(percentile: float) -> Severity:
     if percentile < 2 or percentile > 98:
         return Severity.EXTREME
-    if percentile < 10 or percentile > 90:
+    if percentile <= 10 or percentile >= 90:
         return Severity.VERY_UNUSUAL
-    if percentile < 25 or percentile > 75:
+    if percentile <= 25 or percentile >= 75:
         return Severity.UNUSUAL
     return Severity.NORMAL
 

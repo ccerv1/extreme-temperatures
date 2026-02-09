@@ -67,7 +67,7 @@ class TestComputeLatestInsight:
         result = compute_latest_insight(db_with_station, "USW00094728")
         assert result is not None
         assert result["station_id"] == "USW00094728"
-        assert result["window_days"] == 3
+        assert result["window_days"] == 7
         assert result["metric"] == "tavg_c"
         assert result["severity"] in ["normal", "unusual", "very_unusual", "extreme", "insufficient_data"]
         assert result["direction"] in ["warm", "cold", "neutral"]

@@ -33,7 +33,7 @@ logger = logging.getLogger(__name__)
 def compute_latest_insight(
     conn: duckdb.DuckDBPyConnection,
     station_id: str,
-    window_days: int = 3,
+    window_days: int = 7,
     metric: str = "tavg_c",
 ) -> dict | None:
     """Compute and store the latest insight for a station.
@@ -79,8 +79,6 @@ def compute_latest_insight(
         percentile = None
         if quantiles is not None:
             percentile = get_percentile_for_value_from_quantiles(quantiles, float(value))
-            if percentile is not None:
-                percentile = round(percentile, 1)
 
         # Coverage years from station metadata
         coverage_years = station.get("coverage_years")
@@ -101,7 +99,7 @@ def compute_latest_insight(
 
         # Classify
         if percentile is not None:
-            severity = classify_severity(percentile, coverage_years)
+            severity = classify_severity(percentile, coverage_years, coverage_ratio=coverage_ratio)
             direction = classify_direction(percentile, metric)
         else:
             severity = Severity.INSUFFICIENT_DATA
@@ -124,7 +122,7 @@ def compute_latest_insight(
             "window_days": window_days,
             "metric": metric,
             "value": round(value, 2) if value is not None else None,
-            "percentile": percentile,
+            "percentile": round(percentile, 1) if percentile is not None else None,
             "severity": severity.value,
             "direction": direction.value,
             "primary_statement": primary,

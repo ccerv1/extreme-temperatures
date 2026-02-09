@@ -118,7 +118,7 @@ def get_window_insight(
         first_year_int = first_year_override
 
     if percentile is not None:
-        severity = classify_severity(percentile, coverage_years)
+        severity = classify_severity(percentile, coverage_years, coverage_ratio=coverage_ratio)
         direction = classify_direction(percentile, metric)
     else:
         from extreme_temps.compute.severity import Severity, Direction
