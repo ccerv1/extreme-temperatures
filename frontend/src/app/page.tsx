@@ -174,44 +174,46 @@ export default function Home() {
         </div>
       )}
 
-      <div className="-mt-2">
+      <div className="-mt-2 rounded-lg border border-neutral-200 overflow-hidden">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b border-neutral-100 bg-neutral-50">
+              <th className="px-3 py-1.5 text-left text-xs font-medium text-neutral-400">Name</th>
+              <th className="px-3 py-1.5 text-right text-xs font-medium text-neutral-400 w-20">{dateLabel}</th>
+              <th className="px-3 py-1.5 text-right text-xs font-medium text-neutral-400 w-36">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sortedStations.map((s) => {
+              const stationInsights = insightMap[s.station_id];
+              const todayInsight = stationInsights?.[1];
+              const windowInsight = stationInsights?.[selectedWindow];
+              const display = windowInsight ? getSeverityDisplay(windowInsight) : null;
+              const tempF = todayInsight?.value != null
+                ? celsiusToFahrenheit(todayInsight.value)
+                : null;
 
-        {/* Column headers */}
-        <div className="flex items-center px-3 py-1.5 text-xs text-neutral-400">
-          <span className="flex-1">Name</span>
-          <span className="w-20 text-right">{dateLabel}</span>
-          <span className="w-36 text-right">Status</span>
-        </div>
-
-        <div className="space-y-0.5">
-          {sortedStations.map((s) => {
-            const stationInsights = insightMap[s.station_id];
-            const todayInsight = stationInsights?.[1];
-            const windowInsight = stationInsights?.[selectedWindow];
-            const display = windowInsight ? getSeverityDisplay(windowInsight) : null;
-            const tempF = todayInsight?.value != null
-              ? celsiusToFahrenheit(todayInsight.value)
-              : null;
-
-            return (
-              <Link
-                key={s.station_id}
-                href={`/station/${s.station_id}`}
-                className="flex items-center rounded-lg px-3 py-1 hover:bg-neutral-50 transition-colors group"
-              >
-                <span className="flex-1 font-medium text-neutral-900 underline decoration-neutral-300 decoration-dashed underline-offset-2 group-hover:text-blue-600 group-hover:decoration-blue-400 transition-colors truncate">
-                  {s.city}
-                </span>
-                <span className="w-20 text-right text-sm tabular-nums text-neutral-600">
-                  {tempF != null ? `${tempF.toFixed(0)}°F` : "···"}
-                </span>
-                <span className={`w-36 text-right text-sm ${display?.className ?? "text-neutral-300"}`}>
-                  {display?.label ?? "···"}
-                </span>
-              </Link>
-            );
-          })}
-        </div>
+              return (
+                <tr key={s.station_id} className="border-b border-neutral-50 last:border-0 hover:bg-neutral-50 transition-colors group">
+                  <td className="px-3 py-1.5">
+                    <Link
+                      href={`/station/${s.station_id}`}
+                      className="font-medium text-neutral-900 underline decoration-neutral-300 decoration-dashed underline-offset-2 group-hover:text-blue-600 group-hover:decoration-blue-400 transition-colors"
+                    >
+                      {s.city}
+                    </Link>
+                  </td>
+                  <td className="px-3 py-1.5 text-right tabular-nums text-neutral-600">
+                    {tempF != null ? `${tempF.toFixed(0)}°F` : "···"}
+                  </td>
+                  <td className={`px-3 py-1.5 text-right ${display?.className ?? "text-neutral-300"}`}>
+                    {display?.label ?? "···"}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
     </div>
   );
