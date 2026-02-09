@@ -1,402 +1,52 @@
 [
-  {
-    "station_id": "USW00094728",
-    "wban": "094728",
-    "name": "New York City Central Park",
-    "lat": 40.7789,
-    "lon": -73.9692,
-    "elevation_m": 47.5
-  },
-  {
-    "station_id": "USW00094846",
-    "wban": "094846",
-    "name": "Chicago OHare International Airport",
-    "lat": 41.9742,
-    "lon": -87.9073,
-    "elevation_m": 201.8
-  },
-  {
-    "station_id": "USW00023174",
-    "wban": "023174",
-    "name": "Los Angeles International Airport",
-    "lat": 33.9381,
-    "lon": -118.3889,
-    "elevation_m": 29.6
-  },
-  {
-    "station_id": "USW00012918",
-    "wban": "012918",
-    "name": "Houston Hobby Airport",
-    "lat": 29.6453,
-    "lon": -95.2789,
-    "elevation_m": 14.3
-  },
-  {
-    "station_id": "USW00023183",
-    "wban": "023183",
-    "name": "Phoenix Sky Harbor International Airport",
-    "lat": 33.4278,
-    "lon": -112.0042,
-    "elevation_m": 337.1
-  },
-  {
-    "station_id": "USW00013739",
-    "wban": "013739",
-    "name": "Philadelphia International Airport",
-    "lat": 39.8722,
-    "lon": -75.2414,
-    "elevation_m": 4.9
-  },
-  {
-    "station_id": "USW00012921",
-    "wban": "012921",
-    "name": "San Antonio International Airport",
-    "lat": 29.5339,
-    "lon": -98.4697,
-    "elevation_m": 242.3
-  },
-  {
-    "station_id": "USW00023188",
-    "wban": "023188",
-    "name": "San Diego Lindbergh Field",
-    "lat": 32.7336,
-    "lon": -117.1831,
-    "elevation_m": 4.6
-  },
-  {
-    "station_id": "USW00003927",
-    "wban": "003927",
-    "name": "Dallas Fort Worth International Airport",
-    "lat": 32.8969,
-    "lon": -97.0381,
-    "elevation_m": 170.7
-  },
-  {
-    "station_id": "USW00023293",
-    "wban": "023293",
-    "name": "San Jose International Airport",
-    "lat": 37.3592,
-    "lon": -121.9244,
-    "elevation_m": 15.5
-  },
-  {
-    "station_id": "USW00013958",
-    "wban": "013958",
-    "name": "Austin Camp Mabry",
-    "lat": 30.3183,
-    "lon": -97.7558,
-    "elevation_m": 198.1
-  },
-  {
-    "station_id": "USW00013889",
-    "wban": "013889",
-    "name": "Jacksonville International Airport",
-    "lat": 30.4944,
-    "lon": -81.6878,
-    "elevation_m": 9.1
-  },
-  {
-    "station_id": "USW00023234",
-    "wban": "023234",
-    "name": "San Francisco International Airport",
-    "lat": 37.6197,
-    "lon": -122.3647,
-    "elevation_m": 2.4
-  },
-  {
-    "station_id": "USW00014821",
-    "wban": "014821",
-    "name": "Columbus Port Columbus International",
-    "lat": 39.9981,
-    "lon": -82.8917,
-    "elevation_m": 249.0
-  },
-  {
-    "station_id": "USW00013881",
-    "wban": "013881",
-    "name": "Charlotte Douglas International Airport",
-    "lat": 35.2144,
-    "lon": -80.9431,
-    "elevation_m": 228.0
-  },
-  {
-    "station_id": "USW00093819",
-    "wban": "093819",
-    "name": "Indianapolis International Airport",
-    "lat": 39.7172,
-    "lon": -86.2944,
-    "elevation_m": 241.4
-  },
-  {
-    "station_id": "USW00024233",
-    "wban": "024233",
-    "name": "Seattle Tacoma International Airport",
-    "lat": 47.4444,
-    "lon": -122.3139,
-    "elevation_m": 121.9
-  },
-  {
-    "station_id": "USW00003017",
-    "wban": "003017",
-    "name": "Denver International Airport",
-    "lat": 39.8331,
-    "lon": -104.6581,
-    "elevation_m": 1655.1
-  },
-  {
-    "station_id": "USW00013743",
-    "wban": "013743",
-    "name": "Washington DC Reagan National Airport",
-    "lat": 38.8511,
-    "lon": -77.0342,
-    "elevation_m": 4.9
-  },
-  {
-    "station_id": "USW00014739",
-    "wban": "014739",
-    "name": "Boston Logan International Airport",
-    "lat": 42.3606,
-    "lon": -71.0106,
-    "elevation_m": 4.0
-  },
-  {
-    "station_id": "USW00013897",
-    "wban": "013897",
-    "name": "Nashville International Airport",
-    "lat": 36.1189,
-    "lon": -86.6892,
-    "elevation_m": 180.4
-  },
-  {
-    "station_id": "USW00013893",
-    "wban": "013893",
-    "name": "Memphis International Airport",
-    "lat": 35.0564,
-    "lon": -89.9878,
-    "elevation_m": 81.7
-  },
-  {
-    "station_id": "USW00024229",
-    "wban": "024229",
-    "name": "Portland International Airport",
-    "lat": 45.5958,
-    "lon": -122.6092,
-    "elevation_m": 6.1
-  },
-  {
-    "station_id": "USW00013967",
-    "wban": "013967",
-    "name": "Oklahoma City Will Rogers World Airport",
-    "lat": 35.3889,
-    "lon": -97.6003,
-    "elevation_m": 396.5
-  },
-  {
-    "station_id": "USW00023169",
-    "wban": "023169",
-    "name": "Las Vegas McCarran International Airport",
-    "lat": 36.0719,
-    "lon": -115.1633,
-    "elevation_m": 636.4
-  },
-  {
-    "station_id": "USW00093721",
-    "wban": "093721",
-    "name": "Baltimore Washington International Airport",
-    "lat": 39.1775,
-    "lon": -76.6683,
-    "elevation_m": 45.7
-  },
-  {
-    "station_id": "USW00014839",
-    "wban": "014839",
-    "name": "Milwaukee Mitchell International Airport",
-    "lat": 42.9553,
-    "lon": -87.9044,
-    "elevation_m": 204.8
-  },
-  {
-    "station_id": "USW00023050",
-    "wban": "023050",
-    "name": "Albuquerque International Sunport",
-    "lat": 35.0422,
-    "lon": -106.6156,
-    "elevation_m": 1618.5
-  },
-  {
-    "station_id": "USW00023160",
-    "wban": "023160",
-    "name": "Tucson International Airport",
-    "lat": 32.1314,
-    "lon": -110.9553,
-    "elevation_m": 787.9
-  },
-  {
-    "station_id": "USW00024131",
-    "wban": "024131",
-    "name": "Boise Air Terminal",
-    "lat": 43.5644,
-    "lon": -116.2408,
-    "elevation_m": 857.4
-  },
-  {
-    "station_id": "USW00013722",
-    "wban": "013722",
-    "name": "Raleigh Durham International Airport",
-    "lat": 35.8917,
-    "lon": -78.7822,
-    "elevation_m": 126.5
-  },
-  {
-    "station_id": "USW00012839",
-    "wban": "012839",
-    "name": "Miami International Airport",
-    "lat": 25.7906,
-    "lon": -80.3164,
-    "elevation_m": 3.7
-  },
-  {
-    "station_id": "USW00012842",
-    "wban": "012842",
-    "name": "Tampa International Airport",
-    "lat": 27.9614,
-    "lon": -82.5389,
-    "elevation_m": 5.8
-  },
-  {
-    "station_id": "USW00012916",
-    "wban": "012916",
-    "name": "New Orleans Louis Armstrong International",
-    "lat": 29.9833,
-    "lon": -90.2581,
-    "elevation_m": 1.2
-  },
-  {
-    "station_id": "USW00094847",
-    "wban": "094847",
-    "name": "Detroit Metro Airport",
-    "lat": 42.2114,
-    "lon": -83.3531,
-    "elevation_m": 195.7
-  },
-  {
-    "station_id": "USW00014922",
-    "wban": "014922",
-    "name": "Minneapolis St Paul International Airport",
-    "lat": 44.8831,
-    "lon": -93.2289,
-    "elevation_m": 255.1
-  },
-  {
-    "station_id": "USW00003947",
-    "wban": "003947",
-    "name": "Kansas City International Airport",
-    "lat": 39.2975,
-    "lon": -94.7139,
-    "elevation_m": 312.1
-  },
-  {
-    "station_id": "USW00013874",
-    "wban": "013874",
-    "name": "Atlanta Hartsfield Jackson International",
-    "lat": 33.6303,
-    "lon": -84.4419,
-    "elevation_m": 308.2
-  },
-  {
-    "station_id": "USW00024127",
-    "wban": "024127",
-    "name": "Salt Lake City International Airport",
-    "lat": 40.7786,
-    "lon": -111.9692,
-    "elevation_m": 1288.1
-  },
-  {
-    "station_id": "USW00094823",
-    "wban": "094823",
-    "name": "Pittsburgh International Airport",
-    "lat": 40.4847,
-    "lon": -80.2144,
-    "elevation_m": 367.6
-  },
-  {
-    "station_id": "USW00014740",
-    "wban": "014740",
-    "name": "Hartford Bradley International Airport",
-    "lat": 41.9389,
-    "lon": -72.6831,
-    "elevation_m": 53.3
-  },
-  {
-    "station_id": "USW00014733",
-    "wban": "014733",
-    "name": "Buffalo Niagara International Airport",
-    "lat": 42.9411,
-    "lon": -78.7364,
-    "elevation_m": 215.2
-  },
-  {
-    "station_id": "USW00012815",
-    "wban": "012815",
-    "name": "Orlando International Airport",
-    "lat": 28.4294,
-    "lon": -81.3089,
-    "elevation_m": 27.4
-  },
-  {
-    "station_id": "USW00023232",
-    "wban": "023232",
-    "name": "Sacramento Executive Airport",
-    "lat": 38.5069,
-    "lon": -121.495,
-    "elevation_m": 5.2
-  },
-  {
-    "station_id": "USW00022521",
-    "wban": "022521",
-    "name": "Honolulu International Airport",
-    "lat": 21.3178,
-    "lon": -157.9331,
-    "elevation_m": 2.1
-  },
-  {
-    "station_id": "USW00026451",
-    "wban": "026451",
-    "name": "Anchorage Ted Stevens International",
-    "lat": 61.1744,
-    "lon": -150.0278,
-    "elevation_m": 36.6
-  },
-  {
-    "station_id": "USW00013740",
-    "wban": "013740",
-    "name": "Richmond International Airport",
-    "lat": 37.5053,
-    "lon": -77.3197,
-    "elevation_m": 50.0
-  },
-  {
-    "station_id": "USW00013994",
-    "wban": "013994",
-    "name": "St Louis Lambert International Airport",
-    "lat": 38.7525,
-    "lon": -90.3736,
-    "elevation_m": 172.0
-  },
-  {
-    "station_id": "USW00014820",
-    "wban": "014820",
-    "name": "Cleveland Hopkins International Airport",
-    "lat": 41.4117,
-    "lon": -81.8497,
-    "elevation_m": 241.4
-  },
-  {
-    "station_id": "USW00094789",
-    "wban": "094789",
-    "name": "New York JFK International Airport",
-    "lat": 40.6386,
-    "lon": -73.7622,
-    "elevation_m": 3.4
-  }
+  {"station_id": "USW00094728", "wban": "094728", "name": "New York City Central Park", "city": "New York", "location": "Central Park", "lat": 40.7789, "lon": -73.9692, "elevation_m": 47.5},
+  {"station_id": "USW00094846", "wban": "094846", "name": "Chicago OHare International Airport", "city": "Chicago", "location": "O'Hare Airport", "lat": 41.9742, "lon": -87.9073, "elevation_m": 201.8},
+  {"station_id": "USW00023174", "wban": "023174", "name": "Los Angeles International Airport", "city": "Los Angeles", "location": "LAX Airport", "lat": 33.9381, "lon": -118.3889, "elevation_m": 29.6},
+  {"station_id": "USW00012918", "wban": "012918", "name": "Houston Hobby Airport", "city": "Houston", "location": "Hobby Airport", "lat": 29.6453, "lon": -95.2789, "elevation_m": 14.3},
+  {"station_id": "USW00023183", "wban": "023183", "name": "Phoenix Sky Harbor International Airport", "city": "Phoenix", "location": "Sky Harbor Airport", "lat": 33.4278, "lon": -112.0042, "elevation_m": 337.1},
+  {"station_id": "USW00013739", "wban": "013739", "name": "Philadelphia International Airport", "city": "Philadelphia", "location": "PHL Airport", "lat": 39.8722, "lon": -75.2414, "elevation_m": 4.9},
+  {"station_id": "USW00012921", "wban": "012921", "name": "San Antonio International Airport", "city": "San Antonio", "location": "SAT Airport", "lat": 29.5339, "lon": -98.4697, "elevation_m": 242.3},
+  {"station_id": "USW00023188", "wban": "023188", "name": "San Diego Lindbergh Field", "city": "San Diego", "location": "Lindbergh Field", "lat": 32.7336, "lon": -117.1831, "elevation_m": 4.6},
+  {"station_id": "USW00003927", "wban": "003927", "name": "Dallas Fort Worth International Airport", "city": "Dallas–Fort Worth", "location": "DFW Airport", "lat": 32.8969, "lon": -97.0381, "elevation_m": 170.7},
+  {"station_id": "USW00023293", "wban": "023293", "name": "San Jose International Airport", "city": "San Jose", "location": "SJC Airport", "lat": 37.3592, "lon": -121.9244, "elevation_m": 15.5},
+  {"station_id": "USW00013958", "wban": "013958", "name": "Austin Camp Mabry", "city": "Austin", "location": "Camp Mabry", "lat": 30.3183, "lon": -97.7558, "elevation_m": 198.1},
+  {"station_id": "USW00013889", "wban": "013889", "name": "Jacksonville International Airport", "city": "Jacksonville", "location": "JAX Airport", "lat": 30.4944, "lon": -81.6878, "elevation_m": 9.1},
+  {"station_id": "USW00023234", "wban": "023234", "name": "San Francisco International Airport", "city": "San Francisco", "location": "SFO Airport", "lat": 37.6197, "lon": -122.3647, "elevation_m": 2.4},
+  {"station_id": "USW00014821", "wban": "014821", "name": "Columbus Port Columbus International", "city": "Columbus", "location": "Port Columbus Airport", "lat": 39.9981, "lon": -82.8917, "elevation_m": 249.0},
+  {"station_id": "USW00013881", "wban": "013881", "name": "Charlotte Douglas International Airport", "city": "Charlotte", "location": "Douglas Airport", "lat": 35.2144, "lon": -80.9431, "elevation_m": 228.0},
+  {"station_id": "USW00093819", "wban": "093819", "name": "Indianapolis International Airport", "city": "Indianapolis", "location": "IND Airport", "lat": 39.7172, "lon": -86.2944, "elevation_m": 241.4},
+  {"station_id": "USW00024233", "wban": "024233", "name": "Seattle Tacoma International Airport", "city": "Seattle", "location": "Sea-Tac Airport", "lat": 47.4444, "lon": -122.3139, "elevation_m": 121.9},
+  {"station_id": "USW00003017", "wban": "003017", "name": "Denver International Airport", "city": "Denver", "location": "DEN Airport", "lat": 39.8331, "lon": -104.6581, "elevation_m": 1655.1},
+  {"station_id": "USW00013743", "wban": "013743", "name": "Washington DC Reagan National Airport", "city": "Washington, DC", "location": "Reagan National Airport", "lat": 38.8511, "lon": -77.0342, "elevation_m": 4.9},
+  {"station_id": "USW00014739", "wban": "014739", "name": "Boston Logan International Airport", "city": "Boston", "location": "Logan Airport", "lat": 42.3606, "lon": -71.0106, "elevation_m": 4.0},
+  {"station_id": "USW00013897", "wban": "013897", "name": "Nashville International Airport", "city": "Nashville", "location": "BNA Airport", "lat": 36.1189, "lon": -86.6892, "elevation_m": 180.4},
+  {"station_id": "USW00013893", "wban": "013893", "name": "Memphis International Airport", "city": "Memphis", "location": "MEM Airport", "lat": 35.0564, "lon": -89.9878, "elevation_m": 81.7},
+  {"station_id": "USW00024229", "wban": "024229", "name": "Portland International Airport", "city": "Portland", "location": "PDX Airport", "lat": 45.5958, "lon": -122.6092, "elevation_m": 6.1},
+  {"station_id": "USW00013967", "wban": "013967", "name": "Oklahoma City Will Rogers World Airport", "city": "Oklahoma City", "location": "Will Rogers Airport", "lat": 35.3889, "lon": -97.6003, "elevation_m": 396.5},
+  {"station_id": "USW00023169", "wban": "023169", "name": "Las Vegas McCarran International Airport", "city": "Las Vegas", "location": "McCarran Airport", "lat": 36.0719, "lon": -115.1633, "elevation_m": 636.4},
+  {"station_id": "USW00093721", "wban": "093721", "name": "Baltimore Washington International Airport", "city": "Baltimore", "location": "BWI Airport", "lat": 39.1775, "lon": -76.6683, "elevation_m": 45.7},
+  {"station_id": "USW00014839", "wban": "014839", "name": "Milwaukee Mitchell International Airport", "city": "Milwaukee", "location": "Mitchell Airport", "lat": 42.9553, "lon": -87.9044, "elevation_m": 204.8},
+  {"station_id": "USW00023050", "wban": "023050", "name": "Albuquerque International Sunport", "city": "Albuquerque", "location": "Sunport Airport", "lat": 35.0422, "lon": -106.6156, "elevation_m": 1618.5},
+  {"station_id": "USW00023160", "wban": "023160", "name": "Tucson International Airport", "city": "Tucson", "location": "TUS Airport", "lat": 32.1314, "lon": -110.9553, "elevation_m": 787.9},
+  {"station_id": "USW00024131", "wban": "024131", "name": "Boise Air Terminal", "city": "Boise", "location": "Air Terminal", "lat": 43.5644, "lon": -116.2408, "elevation_m": 857.4},
+  {"station_id": "USW00013722", "wban": "013722", "name": "Raleigh Durham International Airport", "city": "Raleigh–Durham", "location": "RDU Airport", "lat": 35.8917, "lon": -78.7822, "elevation_m": 126.5},
+  {"station_id": "USW00012839", "wban": "012839", "name": "Miami International Airport", "city": "Miami", "location": "MIA Airport", "lat": 25.7906, "lon": -80.3164, "elevation_m": 3.7},
+  {"station_id": "USW00012842", "wban": "012842", "name": "Tampa International Airport", "city": "Tampa", "location": "TPA Airport", "lat": 27.9614, "lon": -82.5389, "elevation_m": 5.8},
+  {"station_id": "USW00012916", "wban": "012916", "name": "New Orleans Louis Armstrong International", "city": "New Orleans", "location": "Armstrong Airport", "lat": 29.9833, "lon": -90.2581, "elevation_m": 1.2},
+  {"station_id": "USW00094847", "wban": "094847", "name": "Detroit Metro Airport", "city": "Detroit", "location": "Metro Airport", "lat": 42.2114, "lon": -83.3531, "elevation_m": 195.7},
+  {"station_id": "USW00014922", "wban": "014922", "name": "Minneapolis St Paul International Airport", "city": "Minneapolis–St. Paul", "location": "MSP Airport", "lat": 44.8831, "lon": -93.2289, "elevation_m": 255.1},
+  {"station_id": "USW00003947", "wban": "003947", "name": "Kansas City International Airport", "city": "Kansas City", "location": "MCI Airport", "lat": 39.2975, "lon": -94.7139, "elevation_m": 312.1},
+  {"station_id": "USW00013874", "wban": "013874", "name": "Atlanta Hartsfield Jackson International", "city": "Atlanta", "location": "Hartsfield-Jackson Airport", "lat": 33.6303, "lon": -84.4419, "elevation_m": 308.2},
+  {"station_id": "USW00024127", "wban": "024127", "name": "Salt Lake City International Airport", "city": "Salt Lake City", "location": "SLC Airport", "lat": 40.7786, "lon": -111.9692, "elevation_m": 1288.1},
+  {"station_id": "USW00094823", "wban": "094823", "name": "Pittsburgh International Airport", "city": "Pittsburgh", "location": "PIT Airport", "lat": 40.4847, "lon": -80.2144, "elevation_m": 367.6},
+  {"station_id": "USW00014740", "wban": "014740", "name": "Hartford Bradley International Airport", "city": "Hartford", "location": "Bradley Airport", "lat": 41.9389, "lon": -72.6831, "elevation_m": 53.3},
+  {"station_id": "USW00014733", "wban": "014733", "name": "Buffalo Niagara International Airport", "city": "Buffalo", "location": "Niagara Airport", "lat": 42.9411, "lon": -78.7364, "elevation_m": 215.2},
+  {"station_id": "USW00012815", "wban": "012815", "name": "Orlando International Airport", "city": "Orlando", "location": "MCO Airport", "lat": 28.4294, "lon": -81.3089, "elevation_m": 27.4},
+  {"station_id": "USW00023232", "wban": "023232", "name": "Sacramento Executive Airport", "city": "Sacramento", "location": "Executive Airport", "lat": 38.5069, "lon": -121.495, "elevation_m": 5.2},
+  {"station_id": "USW00022521", "wban": "022521", "name": "Honolulu International Airport", "city": "Honolulu", "location": "HNL Airport", "lat": 21.3178, "lon": -157.9331, "elevation_m": 2.1},
+  {"station_id": "USW00026451", "wban": "026451", "name": "Anchorage Ted Stevens International", "city": "Anchorage", "location": "Ted Stevens Airport", "lat": 61.1744, "lon": -150.0278, "elevation_m": 36.6},
+  {"station_id": "USW00013740", "wban": "013740", "name": "Richmond International Airport", "city": "Richmond", "location": "RIC Airport", "lat": 37.5053, "lon": -77.3197, "elevation_m": 50.0},
+  {"station_id": "USW00013994", "wban": "013994", "name": "St Louis Lambert International Airport", "city": "St. Louis", "location": "Lambert Airport", "lat": 38.7525, "lon": -90.3736, "elevation_m": 172.0},
+  {"station_id": "USW00014820", "wban": "014820", "name": "Cleveland Hopkins International Airport", "city": "Cleveland", "location": "Hopkins Airport", "lat": 41.4117, "lon": -81.8497, "elevation_m": 241.4},
+  {"station_id": "USW00094789", "wban": "094789", "name": "New York JFK International Airport", "city": "New York (JFK)", "location": "JFK Airport", "lat": 40.6386, "lon": -73.7622, "elevation_m": 3.4}
 ]
