@@ -1,0 +1,32 @@
+name: Backfill Station Data
+
+on:
+  workflow_dispatch:
+    inputs:
+      station_ids:
+        description: 'Comma-separated GHCN station IDs (or "all" for full registry)'
+        required: true
+        default: "USW00094728"
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
+      - run: uv sync --project backend
+
+      - name: Run backfill
+        run: uv run --project backend python scripts/backfill.py --stations "${{ inputs.station_ids }}"
+
+      - name: Upload DuckDB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: extreme-temps-db
+          path: data/extreme_temps.duckdb
+          retention-days: 90

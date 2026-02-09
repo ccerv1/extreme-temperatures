@@ -1,0 +1,65 @@
+name: Nightly Ingest
+
+on:
+  schedule:
+    - cron: "30 6 * * *"  # 6:30 UTC daily
+  workflow_dispatch:  # allow manual trigger
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
+      - run: uv sync --project backend
+
+      # Download existing DB from latest artifact (if exists)
+      - name: Download existing DB
+        uses: actions/download-artifact@v4
+        with:
+          name: extreme-temps-db
+          path: data/
+        continue-on-error: true
+
+      - name: Run incremental ingest
+        run: |
+          uv run --project backend python -c "
+          from extreme_temps.db.connection import get_connection
+          from extreme_temps.db.schema import create_all_tables
+          from extreme_temps.ingest.stations import seed_stations
+          from extreme_temps.ingest.orchestrator import ingest_all_stations_incremental
+
+          conn = get_connection()
+          create_all_tables(conn)
+          seed_stations(conn)
+          results = ingest_all_stations_incremental(conn)
+          for r in results:
+              print(f'{r.station_id}: {r.rows_inserted} rows ({r.source})')
+          conn.close()
+          "
+
+      - name: Recompute recent windows
+        run: |
+          uv run --project backend python -c "
+          from extreme_temps.db.connection import get_connection
+          from extreme_temps.compute.rolling_windows import compute_recent_windows
+
+          conn = get_connection()
+          stations = conn.execute('SELECT station_id FROM dim_station WHERE is_active = TRUE').fetchdf()
+          for sid in stations['station_id']:
+              n = compute_recent_windows(conn, sid, lookback_days=400)
+              print(f'{sid}: {n} window rows')
+          conn.close()
+          "
+
+      - name: Upload updated DB
+        uses: actions/upload-artifact@v4
+        with:
+          name: extreme-temps-db
+          path: data/extreme_temps.duckdb
+          retention-days: 90

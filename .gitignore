@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# DuckDB
+*.duckdb
+*.duckdb.wal
+
+# Data (keep structure, ignore large files)
+data/raw/
+data/consolidated/
+
+# Node / Next.js
+node_modules/
+frontend/.next/
+frontend/out/
+frontend/.env*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test / Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+
+# Claude Code (local dev tools)
+.claude/
+
+# Playwright MCP logs
+.playwright-mcp/
