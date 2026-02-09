@@ -138,10 +138,10 @@ export default function Home() {
         </p>
       </div>
 
-      {/* Distribution curve */}
-      {distributionPoints.length > 0 && (
-        <div className="relative">
-          <div className="absolute top-0 left-0 z-10">
+      {/* Summary + window selector */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        {distributionPoints.length > 0 && (
+          <div>
             <span className="text-2xl font-semibold tabular-nums tracking-tight">
               {outlierCount}
             </span>
@@ -149,31 +149,30 @@ export default function Home() {
               of {distributionPoints.length} stations outside normal range
             </span>
           </div>
-          <DistributionCurve points={distributionPoints} />
+        )}
+        <div className="flex items-center gap-1">
+          {WINDOW_OPTIONS.map((opt) => (
+            <button
+              key={opt.days}
+              onClick={() => setSelectedWindow(opt.days)}
+              className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                selectedWindow === opt.days
+                  ? "bg-neutral-900 text-white"
+                  : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200"
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
         </div>
+      </div>
+
+      {/* Distribution curve */}
+      {distributionPoints.length > 0 && (
+        <DistributionCurve points={distributionPoints} />
       )}
 
       <div>
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-medium text-neutral-400 uppercase tracking-wider">
-            Stations
-          </h2>
-          <div className="flex items-center gap-1">
-            {WINDOW_OPTIONS.map((opt) => (
-              <button
-                key={opt.days}
-                onClick={() => setSelectedWindow(opt.days)}
-                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                  selectedWindow === opt.days
-                    ? "bg-neutral-900 text-white"
-                    : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200"
-                }`}
-              >
-                {opt.label}
-              </button>
-            ))}
-          </div>
-        </div>
 
         {/* Column headers */}
         <div className="flex items-center px-3 py-1.5 text-xs text-neutral-400">
@@ -196,7 +195,7 @@ export default function Home() {
               <Link
                 key={s.station_id}
                 href={`/station/${s.station_id}`}
-                className="flex items-center rounded-lg px-3 py-2.5 hover:bg-neutral-50 transition-colors group"
+                className="flex items-center rounded-lg px-3 py-1.5 hover:bg-neutral-50 transition-colors group"
               >
                 <span className="flex-1 min-w-0">
                   <span className="block font-medium text-neutral-900 underline decoration-neutral-300 decoration-dashed underline-offset-2 group-hover:text-blue-600 group-hover:decoration-blue-400 transition-colors truncate">
