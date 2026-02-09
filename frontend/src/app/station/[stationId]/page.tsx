@@ -11,6 +11,7 @@ import TemperatureChart from "@/components/TemperatureChart";
 import RecordsTable from "@/components/RecordsTable";
 import SeasonalRankingTable from "@/components/SeasonalRankingTable";
 import ExtremesRankingTable from "@/components/ExtremesRankingTable";
+import allStations from "@/data/stations.json";
 
 function celsiusToFahrenheit(c: number): number {
   return c * 9 / 5 + 32;
@@ -175,16 +176,20 @@ export default function StationPage() {
         <a href="/" className="text-xs text-neutral-400 hover:text-neutral-600 transition-colors">
           &larr; All stations
         </a>
-        <h1 className="mt-1 text-2xl font-semibold tracking-tight">
-          {station?.name ?? stationId}
-        </h1>
-        {station && (
-          <p className="text-xs text-neutral-400 mt-0.5">
-            {station.lat.toFixed(4)}, {station.lon.toFixed(4)}
-            {station.elevation_m != null && ` · ${station.elevation_m}m`}
-            {station.coverage_years != null && ` · ${station.coverage_years} years`}
-          </p>
-        )}
+        {(() => {
+          const meta = allStations.find((s) => s.station_id === stationId);
+          return (
+            <>
+              <h1 className="mt-1 text-2xl font-semibold tracking-tight">
+                {meta?.city ?? station?.name ?? stationId}
+              </h1>
+              <p className="text-xs text-neutral-400 mt-0.5">
+                {meta?.location ?? station?.name}
+                {station?.coverage_years != null && ` · ${station.coverage_years} years of data`}
+              </p>
+            </>
+          );
+        })()}
       </div>
 
       {/* Today card */}
