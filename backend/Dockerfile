@@ -6,6 +6,7 @@ WORKDIR /app
 
 # Install dependencies first (cached layer)
 COPY backend/pyproject.toml pyproject.toml
+COPY backend/README.md README.md
 COPY backend/src/ src/
 RUN uv sync --no-dev
 

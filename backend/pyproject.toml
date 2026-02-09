@@ -2,7 +2,7 @@
 name = "extreme-temps"
 version = "0.2.0"
 description = "Historical weather extremes analysis — data pipeline, compute engine, and API"
-readme = "../README.md"
+readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "duckdb>=1.1",
