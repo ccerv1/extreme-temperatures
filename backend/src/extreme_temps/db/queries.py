@@ -315,14 +315,14 @@ def upsert_latest_insight(conn: duckdb.DuckDBPyConnection, row: dict) -> None:
     """Insert or replace a precomputed latest insight for a station."""
     conn.execute("""
         INSERT OR REPLACE INTO fact_station_latest_insight (
-            station_id, end_date, window_days, metric, value, percentile,
+            station_id, window_days, end_date, metric, value, percentile,
             severity, direction, primary_statement, supporting_line,
-            coverage_years, first_year, computed_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, current_timestamp)
+            coverage_years, first_year, since_year, computed_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, current_timestamp)
     """, [
         row["station_id"],
-        row["end_date"],
         row["window_days"],
+        row["end_date"],
         row["metric"],
         row.get("value"),
         row.get("percentile"),
@@ -332,18 +332,36 @@ def upsert_latest_insight(conn: duckdb.DuckDBPyConnection, row: dict) -> None:
         row["supporting_line"],
         row.get("coverage_years"),
         row.get("first_year"),
+        row.get("since_year"),
     ])
 
 
-def get_all_latest_insights(conn: duckdb.DuckDBPyConnection) -> list[dict]:
-    """Fetch all precomputed latest insights (one per station)."""
-    df = conn.execute("""
-        SELECT station_id, end_date, window_days, metric, value, percentile,
-               severity, direction, primary_statement, supporting_line,
-               coverage_years, first_year
-        FROM fact_station_latest_insight
-        ORDER BY station_id
-    """).fetchdf()
+def get_all_latest_insights(
+    conn: duckdb.DuckDBPyConnection,
+    window_days: int | None = None,
+) -> list[dict]:
+    """Fetch all precomputed latest insights.
+
+    If window_days is provided, returns only rows for that window size.
+    Otherwise returns all rows (multiple per station).
+    """
+    if window_days is not None:
+        df = conn.execute("""
+            SELECT station_id, end_date, window_days, metric, value, percentile,
+                   severity, direction, primary_statement, supporting_line,
+                   coverage_years, first_year, since_year
+            FROM fact_station_latest_insight
+            WHERE window_days = ?
+            ORDER BY station_id
+        """, [window_days]).fetchdf()
+    else:
+        df = conn.execute("""
+            SELECT station_id, end_date, window_days, metric, value, percentile,
+                   severity, direction, primary_statement, supporting_line,
+                   coverage_years, first_year, since_year
+            FROM fact_station_latest_insight
+            ORDER BY station_id, window_days
+        """).fetchdf()
     if df.empty:
         return []
     return df.to_dict("records")

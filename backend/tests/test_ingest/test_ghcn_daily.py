@@ -99,3 +99,49 @@ def test_fetch_drops_rows_without_temps(mock_read):
     result = fetch_ghcn_daily("USW00094728")
 
     assert len(result) == 4  # row 0 dropped
+
+
+@patch("extreme_temps.ingest.ghcn_daily.pd.read_csv")
+def test_fetch_rejects_implausible_values(mock_read):
+    """Values outside world record bounds are set to NaN."""
+    df = _mock_ghcn_csv()
+    df.loc[0, "TMIN"] = -9999  # tenths of C → -999.9°C, well below -90°C threshold
+    df.loc[0, "TMAX"] = -9999
+    mock_read.return_value = df
+
+    result = fetch_ghcn_daily("USW00094728")
+
+    # Row 0 should be dropped (both tmin and tmax are NaN after filtering)
+    assert len(result) == 4
+
+
+@patch("extreme_temps.ingest.ghcn_daily.pd.read_csv")
+def test_fetch_corrects_suspicious_tavg(mock_read):
+    """TAVG that wildly disagrees with (TMIN+TMAX)/2 is replaced by midpoint."""
+    df = _mock_ghcn_csv()
+    # Normal tmin/tmax: -3.0°C / 4.0°C (midpoint = 0.5°C)
+    # But TAVG is wildly wrong: -17.8°C (the Miami bug scenario)
+    df.loc[0, "TMIN"] = -30   # -3.0°C
+    df.loc[0, "TMAX"] = 40    # 4.0°C
+    df.loc[0, "TAVG"] = -178  # -17.8°C (deviation = 18.3 > 15)
+    mock_read.return_value = df
+
+    result = fetch_ghcn_daily("USW00094728")
+
+    # tavg should be corrected to midpoint: (-3.0 + 4.0) / 2 = 0.5
+    assert result.iloc[0]["tavg_c"] == 0.5
+
+
+@patch("extreme_temps.ingest.ghcn_daily.pd.read_csv")
+def test_fetch_nulls_swapped_tmin_tmax(mock_read):
+    """Rows where tmin > tmax get all temp columns set to NaN."""
+    df = _mock_ghcn_csv()
+    # Swap: tmin=80 (8.0°C) > tmax=20 (2.0°C)
+    df.loc[0, "TMIN"] = 80
+    df.loc[0, "TMAX"] = 20
+    mock_read.return_value = df
+
+    result = fetch_ghcn_daily("USW00094728")
+
+    # Row 0 should be dropped (tmin/tmax set to NaN, then row dropped)
+    assert len(result) == 4

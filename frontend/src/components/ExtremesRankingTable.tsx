@@ -58,7 +58,7 @@ export default function ExtremesRankingTable({ data }: { data: ExtremesRanking }
   return (
     <div>
       <h3 className="text-xs font-medium text-neutral-400 uppercase tracking-wider mb-3">
-        This ranks among the most extreme {isCold ? "cold" : "hot"} periods on record
+        Most extreme {isCold ? "cold" : "warm"} periods — same time of year
       </h3>
       <div className="rounded-lg border border-neutral-200 overflow-hidden">
         <table className="w-full text-sm">

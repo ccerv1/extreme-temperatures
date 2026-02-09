@@ -147,6 +147,11 @@ def find_all_time_extremes(
         return []
 
     daily = daily.set_index("obs_date").sort_index()
+    daily = daily.dropna(subset=["value"])
+
+    if daily.empty:
+        return []
+
     first_year = daily.index.min().year
     last_year = daily.index.max().year
     n_years = last_year - first_year + 1

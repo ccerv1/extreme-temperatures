@@ -62,6 +62,31 @@ def fetch_ghcn_daily(
         "prcp_mm": pd.to_numeric(df.get("PRCP"), errors="coerce") / 10.0,
     })
 
+    # Reject physically implausible values (world records: −89.2°C / 56.7°C)
+    for col in ["tmin_c", "tmax_c", "tavg_c"]:
+        bad = (result[col] < -90) | (result[col] > 65)
+        n_bad = bad.sum()
+        if n_bad:
+            logger.warning("Rejected %d implausible %s values for %s", n_bad, col, station_id)
+            result.loc[bad, col] = pd.NA
+
+    # Sanity: tmin should not exceed tmax
+    swapped = result["tmin_c"].notna() & result["tmax_c"].notna() & (result["tmin_c"] > result["tmax_c"])
+    if swapped.any():
+        logger.warning("Nulled %d rows where tmin > tmax for %s", swapped.sum(), station_id)
+        result.loc[swapped, ["tmin_c", "tmax_c", "tavg_c"]] = pd.NA
+
+    # If TAVG disagrees wildly with (TMIN+TMAX)/2, prefer the midpoint
+    both_valid = result["tmin_c"].notna() & result["tmax_c"].notna() & result["tavg_c"].notna()
+    if both_valid.any():
+        midpoint = (result.loc[both_valid, "tmin_c"] + result.loc[both_valid, "tmax_c"]) / 2.0
+        deviation = (result.loc[both_valid, "tavg_c"] - midpoint).abs()
+        suspicious = deviation > 15.0
+        n_suspicious = suspicious.sum()
+        if n_suspicious:
+            logger.warning("Corrected %d suspicious TAVG values for %s", n_suspicious, station_id)
+            result.loc[both_valid & suspicious.reindex(result.index, fill_value=False), "tavg_c"] = midpoint[suspicious]
+
     # Compute tavg where missing but tmin/tmax available
     mask = result["tavg_c"].isna() & result["tmin_c"].notna() & result["tmax_c"].notna()
     result.loc[mask, "tavg_c"] = (result.loc[mask, "tmin_c"] + result.loc[mask, "tmax_c"]) / 2.0

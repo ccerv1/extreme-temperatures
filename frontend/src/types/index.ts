@@ -42,7 +42,7 @@ export interface Insight {
   primary_statement: string;
   supporting_line: string;
   value: number | null;
-  severity: "normal" | "unusual" | "very_unusual" | "extreme" | "insufficient_data";
+  severity: "normal" | "a_bit" | "unusual" | "extreme" | "insufficient_data";
   percentile: number | null;
   normal_band: NormalBand | null;
   data_quality: DataQuality;
@@ -127,4 +127,5 @@ export interface LatestInsight {
   supporting_line: string;
   coverage_years: number | null;
   first_year: number | null;
+  since_year: number | null;
 }

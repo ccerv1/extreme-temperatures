@@ -12,6 +12,10 @@ import RecordsTable from "@/components/RecordsTable";
 import SeasonalRankingTable from "@/components/SeasonalRankingTable";
 import ExtremesRankingTable from "@/components/ExtremesRankingTable";
 
+function celsiusToFahrenheit(c: number): number {
+  return c * 9 / 5 + 32;
+}
+
 function todayStr(): string {
   return new Date().toISOString().slice(0, 10);
 }
@@ -22,13 +26,48 @@ function daysAgo(days: number): string {
   return d.toISOString().slice(0, 10);
 }
 
+function formatDate(dateStr: string): string {
+  const d = new Date(dateStr + "T12:00:00");
+  return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+}
+
+function ordinal(n: number): string {
+  const s = ["th", "st", "nd", "rd"];
+  const v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+}
+
+const DEFAULT_SINCE_YEAR = new Date().getFullYear() - 24;
+
+const TODAY_SEVERITY_STYLES: Record<string, Record<string, { label: string; className: string }>> = {
+  cold: {
+    extreme: { label: "Extremely Cold", className: "text-blue-700" },
+    unusual: { label: "Unusually Cold", className: "text-blue-600" },
+    a_bit:   { label: "A Bit Colder",   className: "text-blue-400" },
+  },
+  warm: {
+    extreme: { label: "Extremely Warm", className: "text-red-700" },
+    unusual: { label: "Unusually Warm", className: "text-orange-600" },
+    a_bit:   { label: "A Bit Warmer",   className: "text-amber-400" },
+  },
+};
+
+function getTodaySeverityDisplay(insight: Insight): { label: string; className: string } {
+  if (insight.severity === "normal" || insight.severity === "insufficient_data") {
+    return { label: "Near Normal", className: "text-neutral-500" };
+  }
+  return TODAY_SEVERITY_STYLES[insight.percentile != null && insight.percentile <= 50 ? "cold" : "warm"]?.[insight.severity]
+    ?? { label: "Near Normal", className: "text-neutral-500" };
+}
+
 export default function StationPage() {
   const params = useParams();
   const stationId = params.stationId as string;
 
   const [station, setStation] = useState<Station | null>(null);
   const [windowDays, setWindowDays] = useState(7);
-  const [sinceYear, setSinceYear] = useState<number | null>(null);
+  const [sinceYear, setSinceYear] = useState<number | null>(DEFAULT_SINCE_YEAR);
+  const [todayInsight, setTodayInsight] = useState<Insight | null>(null);
   const [insight, setInsight] = useState<Insight | null>(null);
   const [series, setSeries] = useState<Series | null>(null);
   const [records, setRecords] = useState<StationRecord[]>([]);
@@ -51,10 +90,22 @@ export default function StationPage() {
       setStation(stationData);
       setRecords(recordsData);
 
-      // Try progressively earlier dates for insight (GHCN has 3-5 day lag)
+      // Fetch 1-day insight independently (start from yesterday — today is partial)
+      let todayInsightData: Insight | null = null;
+      for (let i = 1; i <= 7; i++) {
+        try {
+          todayInsightData = await fetchInsight(stationId, daysAgo(i), 1, "tavg_c", sinceYear ?? undefined);
+          break;
+        } catch {
+          continue;
+        }
+      }
+      setTodayInsight(todayInsightData);
+
+      // Fetch rolling window insight (start from yesterday)
       let insightData: Insight | null = null;
-      let workingEndDate = todayStr();
-      for (let i = 0; i <= 7; i++) {
+      let workingEndDate = daysAgo(1);
+      for (let i = 1; i <= 7; i++) {
         const endDate = daysAgo(i);
         try {
           insightData = await fetchInsight(stationId, endDate, windowDays, "tavg_c", sinceYear ?? undefined);
@@ -81,8 +132,8 @@ export default function StationPage() {
       setSeries(seriesData);
       setSeasonalRanking(seasonalData);
 
-      // Fetch extremes only for very_unusual or extreme severity
-      if (insightData.severity === "very_unusual" || insightData.severity === "extreme") {
+      // Fetch extremes for unusual or more severe
+      if (insightData.severity === "unusual" || insightData.severity === "extreme") {
         const direction = insightData.percentile != null && insightData.percentile <= 50 ? "cold" : "warm";
         const extremesData = await fetchExtremesRankings(
           stationId, workingEndDate, windowDays, "tavg_c", direction, sinceYear ?? undefined
@@ -113,6 +164,10 @@ export default function StationPage() {
     );
   }
 
+  const todayTempF = todayInsight?.value != null ? celsiusToFahrenheit(todayInsight.value) : null;
+  const todayDisplay = todayInsight ? getTodaySeverityDisplay(todayInsight) : null;
+  const todayDateLabel = todayInsight ? formatDate(todayInsight.end_date) : null;
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -131,6 +186,37 @@ export default function StationPage() {
           </p>
         )}
       </div>
+
+      {/* Today card */}
+      {todayInsight && (
+        <div className="rounded-xl border border-neutral-100 bg-white p-5">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs font-medium text-neutral-400 uppercase tracking-wider mb-1">
+                {todayDateLabel}
+              </p>
+              {todayTempF != null && (
+                <span className="text-4xl font-light tabular-nums tracking-tight">
+                  {todayTempF.toFixed(0)}
+                  <span className="text-lg text-neutral-400">°F</span>
+                </span>
+              )}
+            </div>
+            <div className="text-right">
+              {todayDisplay && (
+                <span className={`text-sm font-medium ${todayDisplay.className}`}>
+                  {todayDisplay.label}
+                </span>
+              )}
+              {todayInsight.percentile != null && (
+                <p className="text-xs text-neutral-400 mt-0.5">
+                  {ordinal(Math.round(todayInsight.percentile))} percentile
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Window selector + Interval selector */}
       <div className="flex flex-wrap items-center gap-4">
@@ -156,7 +242,7 @@ export default function StationPage() {
       {/* Insight */}
       {!loading && insight && (
         <div className="border-t border-neutral-100 pt-6">
-          <InsightCard insight={insight} />
+          <InsightCard insight={insight} seasonalRanking={seasonalRanking} />
         </div>
       )}
 

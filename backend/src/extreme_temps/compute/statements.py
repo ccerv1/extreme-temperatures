@@ -37,8 +37,6 @@ def generate_insight(
         (primary_statement, supporting_line) tuple.
     """
     window_label = _window_label(window_days)
-    severity_word = _severity_adjective(severity)
-    direction_word = _direction_adjective(direction)
 
     # Primary statement
     if record_info and record_info.get("is_new_record"):
@@ -47,7 +45,12 @@ def generate_insight(
         primary = f"This {window_label} is near normal."
     elif severity == Severity.INSUFFICIENT_DATA:
         primary = f"Not enough climatology data to classify this {window_label}."
+    elif severity == Severity.A_BIT:
+        comparative = _direction_comparative(direction)
+        primary = f"This {window_label} is a bit {comparative}."
     else:
+        severity_word = _severity_adjective(severity)
+        direction_word = _direction_adjective(direction)
         if severity_word:
             primary = f"This {window_label} is {severity_word} {direction_word}."
         else:
@@ -97,8 +100,8 @@ def _window_label(window_days: int) -> str:
 def _severity_adjective(severity: Severity) -> str:
     return {
         Severity.EXTREME: "extremely",
-        Severity.VERY_UNUSUAL: "very",
-        Severity.UNUSUAL: "",
+        Severity.UNUSUAL: "unusually",
+        Severity.A_BIT: "",
         Severity.NORMAL: "",
         Severity.INSUFFICIENT_DATA: "",
     }[severity]
@@ -111,4 +114,14 @@ def _direction_adjective(direction: Direction) -> str:
         Direction.WET: "wet",
         Direction.DRY: "dry",
         Direction.NEUTRAL: "",
+    }[direction]
+
+
+def _direction_comparative(direction: Direction) -> str:
+    return {
+        Direction.WARM: "warmer",
+        Direction.COLD: "colder",
+        Direction.WET: "wetter",
+        Direction.DRY: "drier",
+        Direction.NEUTRAL: "different",
     }[direction]

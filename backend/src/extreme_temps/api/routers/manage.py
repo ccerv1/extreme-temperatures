@@ -10,7 +10,7 @@ from fastapi import APIRouter, Request
 import duckdb
 
 from extreme_temps.ingest.orchestrator import ingest_all_stations_incremental
-from extreme_temps.compute.latest_insights import compute_latest_insight
+from extreme_temps.compute.latest_insights import compute_latest_insights_multi
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -40,17 +40,16 @@ def _run_refresh(conn: duckdb.DuckDBPyConnection) -> None:
             len(results), total_rows, len(ingest_errors), t1 - t0,
         )
 
-        # Step 2: Recompute latest insights
+        # Step 2: Recompute latest insights (all window sizes)
         station_ids = [r.station_id for r in results]
         computed = 0
         compute_errors = 0
         for sid in station_ids:
             try:
-                result = compute_latest_insight(cursor, sid)
-                if result:
-                    computed += 1
+                rows = compute_latest_insights_multi(cursor, sid)
+                computed += len(rows)
             except Exception:
-                logger.exception("Failed to compute latest insight for %s", sid)
+                logger.exception("Failed to compute latest insights for %s", sid)
                 compute_errors += 1
         t2 = time.time()
         logger.info(

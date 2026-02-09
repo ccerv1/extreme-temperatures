@@ -1,4 +1,4 @@
-import type { Insight } from "@/types";
+import type { Insight, SeasonalRanking } from "@/types";
 
 function celsiusToFahrenheit(c: number): number {
   return c * 9 / 5 + 32;
@@ -20,18 +20,23 @@ function daysLabel(windowDays: number): string {
 }
 
 const COLD_STYLES: Record<string, { text: string; intensity: string }> = {
-  extreme:      { text: "text-blue-700",   intensity: "extremely " },
-  very_unusual: { text: "text-blue-600",   intensity: "very " },
-  unusual:      { text: "text-blue-500",   intensity: "unusually " },
+  extreme: { text: "text-blue-700",  intensity: "extremely " },
+  unusual: { text: "text-blue-600",  intensity: "unusually " },
+  a_bit:   { text: "text-blue-400",  intensity: "a bit " },
 };
 
 const WARM_STYLES: Record<string, { text: string; intensity: string }> = {
-  extreme:      { text: "text-red-700",    intensity: "extremely " },
-  very_unusual: { text: "text-orange-600", intensity: "very " },
-  unusual:      { text: "text-amber-600",  intensity: "unusually " },
+  extreme: { text: "text-red-700",    intensity: "extremely " },
+  unusual: { text: "text-orange-600", intensity: "unusually " },
+  a_bit:   { text: "text-amber-400",  intensity: "a bit " },
 };
 
-export default function InsightCard({ insight }: { insight: Insight }) {
+interface InsightCardProps {
+  insight: Insight;
+  seasonalRanking?: SeasonalRanking | null;
+}
+
+export default function InsightCard({ insight, seasonalRanking }: InsightCardProps) {
   const tempF = insight.value != null ? celsiusToFahrenheit(insight.value) : null;
   const period = periodLabel(insight.window_days);
   const days = daysLabel(insight.window_days);
@@ -41,9 +46,33 @@ export default function InsightCard({ insight }: { insight: Insight }) {
   const styles = isCold ? COLD_STYLES : WARM_STYLES;
   const style = styles[insight.severity];
 
+  // Check if this is a seasonal record (rank #1 for this time of year)
+  const isSeasonalRecord = seasonalRanking != null
+    && seasonalRanking.current_rank === 1
+    && seasonalRanking.total_years >= 10;
+
   let headline: React.ReactNode;
-  if (insight.severity === "normal" || insight.severity === "insufficient_data" || !style) {
+  if (isSeasonalRecord && style) {
+    const recordDirection = isCold ? "coldest" : "warmest";
+    const recordStyle = isCold ? "text-blue-700" : "text-red-700";
+    headline = (
+      <>
+        The last {days} have been the{" "}
+        <span className={`${recordStyle} font-bold`}>{recordDirection} {period}</span>{" "}
+        for this time of year in {seasonalRanking.total_years} years.
+      </>
+    );
+  } else if (insight.severity === "normal" || insight.severity === "insufficient_data" || !style) {
     headline = <>The last {days} have been near normal.</>;
+  } else if (insight.severity === "a_bit") {
+    const comparative = isCold ? "colder" : "warmer";
+    const coloredPart = `a bit ${comparative}`;
+    headline = (
+      <>
+        The last {days} have been{" "}
+        <span className={`${style.text} font-bold`}>{coloredPart}</span>.
+      </>
+    );
   } else {
     const coloredPart = `${style.intensity}${direction}`;
     headline = (
@@ -61,7 +90,9 @@ export default function InsightCard({ insight }: { insight: Insight }) {
       </h2>
 
       <p className="text-sm text-neutral-500 leading-relaxed">
-        {insight.supporting_line}
+        {isSeasonalRecord && insight.data_quality
+          ? `${isCold ? "Coldest" : "Warmest"} for this time of year across all ${seasonalRanking.total_years} years of data (${insight.data_quality.since_year ?? insight.data_quality.first_year}\u2013${new Date().getFullYear()}).`
+          : insight.supporting_line}
       </p>
 
       {tempF != null && (

@@ -66,10 +66,10 @@ def main():
         n = compute_recent_windows(conn, station_id)
         logger.info("Recent windows: %d rows", n)
 
-        # 5. Compute latest insight for home page
-        from extreme_temps.compute.latest_insights import compute_latest_insight
-        insight = compute_latest_insight(conn, station_id)
-        logger.info("Latest insight: %s", insight["severity"] if insight else "no data")
+        # 5. Compute latest insights for home page (all window sizes)
+        from extreme_temps.compute.latest_insights import compute_latest_insights_multi
+        insights = compute_latest_insights_multi(conn, station_id)
+        logger.info("Latest insights: %d windows computed", len(insights))
 
     conn.close()
     logger.info("Done.")

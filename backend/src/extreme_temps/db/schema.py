@@ -92,11 +92,14 @@ def create_all_tables(conn: duckdb.DuckDBPyConnection) -> None:
         )
     """)
 
+    # Migrate: old schema had PK (station_id) only; new needs (station_id, window_days)
+    _migrate_latest_insight_table(conn)
+
     conn.execute("""
         CREATE TABLE IF NOT EXISTS fact_station_latest_insight (
-            station_id        VARCHAR PRIMARY KEY,
-            end_date          DATE NOT NULL,
+            station_id        VARCHAR NOT NULL,
             window_days       INTEGER NOT NULL,
+            end_date          DATE NOT NULL,
             metric            VARCHAR NOT NULL,
             value             DOUBLE,
             percentile        DOUBLE,
@@ -106,6 +109,22 @@ def create_all_tables(conn: duckdb.DuckDBPyConnection) -> None:
             supporting_line   VARCHAR NOT NULL,
             coverage_years    INTEGER,
             first_year        INTEGER,
-            computed_at       TIMESTAMP DEFAULT current_timestamp
+            since_year        INTEGER,
+            computed_at       TIMESTAMP DEFAULT current_timestamp,
+            PRIMARY KEY (station_id, window_days)
         )
     """)
+
+
+def _migrate_latest_insight_table(conn: duckdb.DuckDBPyConnection) -> None:
+    """Drop fact_station_latest_insight if it has the old single-column PK."""
+    try:
+        cols = conn.execute(
+            "SELECT column_name FROM information_schema.columns "
+            "WHERE table_name = 'fact_station_latest_insight'"
+        ).fetchall()
+        col_names = {c[0] for c in cols}
+        if col_names and "since_year" not in col_names:
+            conn.execute("DROP TABLE fact_station_latest_insight")
+    except Exception:
+        pass

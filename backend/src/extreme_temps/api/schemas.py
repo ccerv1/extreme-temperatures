@@ -135,3 +135,4 @@ class LatestInsightItem(BaseModel):
     supporting_line: str
     coverage_years: int | None = None
     first_year: int | None = None
+    since_year: int | None = None

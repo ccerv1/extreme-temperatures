@@ -173,43 +173,57 @@ def _fill_recent_from_open_meteo(
     station: dict,
     result: IngestResult,
 ) -> None:
-    """Fill the GHCN lag (last few days) using Open-Meteo."""
-    _, last_date = get_station_date_range(conn, station_id)
-    if last_date is None:
-        return
+    """Fill the GHCN lag (last few days) using Open-Meteo.
 
-    # Convert to date if needed (DuckDB/pandas may return Timestamp)
-    if hasattr(last_date, 'date'):
-        last_date = last_date.date()
-
-    today = date.today()
-    next_day = last_date + pd.Timedelta(days=1)
-    next_day = next_day.date() if hasattr(next_day, 'date') else next_day
-
-    if next_day > today:
-        return  # Already up to date
+    Always re-fetches at least the last 2 days of Open-Meteo data so that
+    the previous day gets updated with final end-of-day values. Caps at
+    yesterday (today's data is partial). Only overwrites existing Open-Meteo
+    rows, never GHCN or GSOD.
+    """
+    from datetime import timedelta
 
     lat = station.get("lat")
     lon = station.get("lon")
     if lat is None or lon is None:
         return
 
-    om_df = fetch_open_meteo(float(lat), float(lon), next_day, today)
+    yesterday = date.today() - timedelta(days=1)
+
+    # Find the last date with authoritative (GHCN/GSOD) data
+    ghcn_last = conn.execute(
+        "SELECT MAX(obs_date) FROM fact_station_day "
+        "WHERE station_id = ? AND source IN ('ghcn_daily', 'gsod')",
+        [station_id],
+    ).fetchone()
+    ghcn_last_date = ghcn_last[0] if ghcn_last and ghcn_last[0] else None
+    if ghcn_last_date and hasattr(ghcn_last_date, 'date'):
+        ghcn_last_date = ghcn_last_date.date()
+
+    if ghcn_last_date is None:
+        return
+
+    # Fetch from day after last GHCN date through yesterday
+    start = ghcn_last_date + timedelta(days=1)
+    if start > yesterday:
+        return  # GHCN is already up to yesterday
+
+    om_df = fetch_open_meteo(float(lat), float(lon), start, yesterday)
     if om_df.empty:
         return
 
-    # Filter to only dates not already in DB
-    existing = conn.execute(
-        "SELECT DISTINCT obs_date FROM fact_station_day WHERE station_id = ?",
+    # Filter out dates that have GHCN/GSOD data (authoritative sources)
+    ghcn_dates = conn.execute(
+        "SELECT DISTINCT obs_date FROM fact_station_day "
+        "WHERE station_id = ? AND source IN ('ghcn_daily', 'gsod')",
         [station_id],
     ).fetchdf()
-
-    existing_dates = set(existing["obs_date"].tolist())
-    om_df = om_df[~om_df["obs_date"].isin(existing_dates)]
+    ghcn_date_set = set(ghcn_dates["obs_date"].tolist())
+    om_df = om_df[~om_df["obs_date"].isin(ghcn_date_set)]
 
     if om_df.empty:
         return
 
+    # INSERT OR REPLACE: overwrites stale Open-Meteo rows with fresh values
     count = upsert_daily_observations(conn, station_id, om_df, source="open_meteo")
     result.rows_inserted += count
     if result.source:

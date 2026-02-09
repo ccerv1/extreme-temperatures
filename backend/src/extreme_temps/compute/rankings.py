@@ -147,11 +147,12 @@ def compute_extremes_rankings(
     metric: str = "tavg_c",
     direction: str = "cold",
     since_year: int | None = None,
+    doy_window_halfwidth: int = DOY_WINDOW_HALFWIDTH,
 ) -> dict | None:
-    """Rank the current period against the most extreme N-day period from any time in each year.
+    """Rank the current period against the most extreme N-day period for this season in each year.
 
     For each year, finds the single most extreme (min for cold, max for warm)
-    rolling N-day average across all dates.
+    rolling N-day average within the same seasonal DOY window as end_date.
 
     Args:
         conn: DuckDB connection.
@@ -161,12 +162,14 @@ def compute_extremes_rankings(
         metric: Metric column name.
         direction: "cold" (find yearly minimums) or "warm" (find yearly maximums).
         since_year: If set, only include years >= this.
+        doy_window_halfwidth: Half-width for seasonal DOY filtering.
 
     Returns:
         Dict with rankings list (including dates), current_rank, total_years, direction.
         None if insufficient data.
     """
     current_year = end_date.year
+    target_doy = end_date.timetuple().tm_yday
 
     params = [station_id]
     year_filter = ""
@@ -194,9 +197,18 @@ def compute_extremes_rankings(
         daily["value"] = daily["value"].rolling(window_days, min_periods=window_days).mean()
         daily = daily.dropna()
 
+    # Filter to same seasonal DOY window
+    daily["doy"] = daily.index.dayofyear
+    doy_diff = (daily["doy"] - target_doy).abs()
+    doy_diff = doy_diff.where(doy_diff <= 183, 366 - doy_diff)
+    daily = daily[doy_diff <= doy_window_halfwidth]
+
+    if daily.empty:
+        return None
+
     daily["year"] = daily.index.year
 
-    # For each year, find the most extreme period
+    # For each year, find the most extreme period within the seasonal window
     per_year = []
     for year, group in daily.groupby("year"):
         if direction == "cold":

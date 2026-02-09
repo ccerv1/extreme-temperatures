@@ -1,10 +1,10 @@
 """Severity classification based on percentile thresholds.
 
-Implements the PRD severity classification:
-    Normal:       >25th to <75th percentile
-    Unusual:      >=10th to <=25th or >=75th to <=90th
-    Very Unusual: >=2nd to <=10th or >=90th to <=98th
-    Extreme:      <2nd or >98th
+Four-level severity scale:
+    Normal:       >35th to <65th percentile
+    A Bit:        >=15th to <=35th or >=65th to <=85th
+    Unusual:      >=5th to <=15th or >=85th to <=95th
+    Extreme:      <5th or >95th
 """
 
 from __future__ import annotations
@@ -16,8 +16,8 @@ from extreme_temps.config import MIN_COVERAGE_YEARS
 
 class Severity(str, Enum):
     EXTREME = "extreme"
-    VERY_UNUSUAL = "very_unusual"
     UNUSUAL = "unusual"
+    A_BIT = "a_bit"
     NORMAL = "normal"
     INSUFFICIENT_DATA = "insufficient_data"
 
@@ -74,19 +74,19 @@ def classify_direction(
 
 
 def _raw_severity(percentile: float) -> Severity:
-    if percentile < 2 or percentile > 98:
+    if percentile < 5 or percentile > 95:
         return Severity.EXTREME
-    if percentile <= 10 or percentile >= 90:
-        return Severity.VERY_UNUSUAL
-    if percentile <= 25 or percentile >= 75:
+    if percentile <= 15 or percentile >= 85:
         return Severity.UNUSUAL
+    if percentile <= 35 or percentile >= 65:
+        return Severity.A_BIT
     return Severity.NORMAL
 
 
 _DOWNGRADE_MAP = {
-    Severity.EXTREME: Severity.VERY_UNUSUAL,
-    Severity.VERY_UNUSUAL: Severity.UNUSUAL,
-    Severity.UNUSUAL: Severity.NORMAL,
+    Severity.EXTREME: Severity.UNUSUAL,
+    Severity.UNUSUAL: Severity.A_BIT,
+    Severity.A_BIT: Severity.NORMAL,
     Severity.NORMAL: Severity.NORMAL,
     Severity.INSUFFICIENT_DATA: Severity.INSUFFICIENT_DATA,
 }

@@ -30,7 +30,7 @@ class TestGenerateInsight:
             coverage_years=80,
             first_year=1944,
         )
-        assert "unusual" not in primary.lower() or "not" in primary.lower()
+        assert "near normal" in primary.lower()
         assert "30-day" in primary.lower()
 
     def test_record(self):
@@ -63,7 +63,7 @@ class TestGenerateInsight:
         kwargs = dict(
             window_days=14,
             value_c=20.0,
-            percentile=85.0,
+            percentile=90.0,
             severity=Severity.UNUSUAL,
             direction=Direction.WARM,
             coverage_years=60,
@@ -78,39 +78,52 @@ class TestGenerateInsight:
             window_days=30,
             value_c=150.0,
             percentile=95.0,
-            severity=Severity.VERY_UNUSUAL,
+            severity=Severity.UNUSUAL,
             direction=Direction.WET,
             coverage_years=70,
             first_year=1954,
         )
         assert "wet" in primary.lower()
-        assert "very wet" in primary.lower()
+        assert "unusually wet" in primary.lower()
         assert "Wetter" in supporting
-
-    def test_very_unusual_cold_phrasing(self):
-        """'very unusually cold' should become 'very cold'."""
-        primary, _ = generate_insight(
-            window_days=14,
-            value_c=-10.0,
-            percentile=5.0,
-            severity=Severity.VERY_UNUSUAL,
-            direction=Direction.COLD,
-            coverage_years=100,
-            first_year=1924,
-        )
-        assert primary == "This 14-day period is very cold."
 
     def test_unusual_warm_phrasing(self):
         primary, _ = generate_insight(
             window_days=7,
             value_c=30.0,
-            percentile=80.0,
+            percentile=92.0,
             severity=Severity.UNUSUAL,
             direction=Direction.WARM,
             coverage_years=100,
             first_year=1924,
         )
-        assert primary == "This week is warm."
+        assert primary == "This week is unusually warm."
+
+    def test_a_bit_warmer_phrasing(self):
+        """A_BIT severity uses comparative form: 'a bit warmer'."""
+        primary, _ = generate_insight(
+            window_days=7,
+            value_c=15.0,
+            percentile=75.0,
+            severity=Severity.A_BIT,
+            direction=Direction.WARM,
+            coverage_years=100,
+            first_year=1924,
+        )
+        assert primary == "This week is a bit warmer."
+
+    def test_a_bit_colder_phrasing(self):
+        """A_BIT severity uses comparative form: 'a bit colder'."""
+        primary, _ = generate_insight(
+            window_days=14,
+            value_c=-3.0,
+            percentile=25.0,
+            severity=Severity.A_BIT,
+            direction=Direction.COLD,
+            coverage_years=100,
+            first_year=1924,
+        )
+        assert primary == "This 14-day period is a bit colder."
 
     def test_since_year_coverage_in_supporting(self):
         """When since_year is set, supporting line should show filtered coverage."""

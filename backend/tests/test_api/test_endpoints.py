@@ -139,7 +139,7 @@ class TestInsightsEndpoint:
         assert data["window_days"] == 7
         assert data["primary_statement"]
         assert data["supporting_line"]
-        assert data["severity"] in ["normal", "unusual", "very_unusual", "extreme", "insufficient_data"]
+        assert data["severity"] in ["normal", "a_bit", "unusual", "extreme", "insufficient_data"]
         assert data["data_quality"]["coverage_years"] >= 1
 
     def test_insight_station_not_found(self, app_with_data):
@@ -210,15 +210,26 @@ class TestLatestInsightsEndpoint:
         assert resp.json() == []
 
     def test_with_precomputed_data(self, app_with_data):
-        from extreme_temps.compute.latest_insights import compute_latest_insight
+        from extreme_temps.compute.latest_insights import compute_latest_insights_multi
         app = app_with_data.app
-        compute_latest_insight(app.state.db, "USW00094728")
+        compute_latest_insights_multi(app.state.db, "USW00094728")
 
         resp = app_with_data.get("/insights/latest")
         assert resp.status_code == 200
         data = resp.json()
-        assert len(data) == 1
+        assert len(data) >= 1  # Multiple windows per station
         assert data[0]["station_id"] == "USW00094728"
-        assert data[0]["severity"] in ["normal", "unusual", "very_unusual", "extreme", "insufficient_data"]
+        assert data[0]["severity"] in ["normal", "a_bit", "unusual", "extreme", "insufficient_data"]
         assert data[0]["primary_statement"]
         assert data[0]["direction"] in ["warm", "cold", "neutral"]
+
+    def test_filter_by_window_days(self, app_with_data):
+        from extreme_temps.compute.latest_insights import compute_latest_insights_multi
+        app = app_with_data.app
+        compute_latest_insights_multi(app.state.db, "USW00094728")
+
+        resp = app_with_data.get("/insights/latest", params={"window_days": 7})
+        assert resp.status_code == 200
+        data = resp.json()
+        for item in data:
+            assert item["window_days"] == 7

@@ -8,7 +8,7 @@ const PRESETS = [
 
 const PRESET_DAYS = new Set(PRESETS.map((p) => p.days));
 
-const DROPDOWN_WINDOWS = [1, 5, 10, 14, 21, 28, 45, 60, 75, 90, 180, 365];
+const DROPDOWN_WINDOWS = [5, 10, 14, 21, 28, 45, 60, 75, 90, 180, 365];
 
 interface Props {
   value: number;
@@ -41,7 +41,7 @@ export default function WindowSelector({ value, onChange }: Props) {
         </option>
         {DROPDOWN_WINDOWS.map((w) => (
           <option key={w} value={w}>
-            {w === 1 ? "1 day" : `${w} days`}
+            {`${w} days`}
           </option>
         ))}
       </select>
