@@ -165,10 +165,6 @@ export default function StationPage() {
     );
   }
 
-  const todayTempF = todayInsight?.value != null ? celsiusToFahrenheit(todayInsight.value) : null;
-  const todayDisplay = todayInsight ? getTodaySeverityDisplay(todayInsight) : null;
-  const todayDateLabel = todayInsight ? formatDate(todayInsight.end_date) : null;
-
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -192,52 +188,21 @@ export default function StationPage() {
         })()}
       </div>
 
-      {/* Today card */}
-      {todayInsight && (
-        <div className="rounded-xl border border-neutral-100 bg-white p-5">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs font-medium text-neutral-400 uppercase tracking-wider mb-1">
-                {todayDateLabel}
-              </p>
-              {todayTempF != null && (
-                <span className="text-4xl font-light tabular-nums tracking-tight">
-                  {todayTempF.toFixed(0)}
-                  <span className="text-lg text-neutral-400">°F</span>
-                </span>
-              )}
-            </div>
-            <div className="text-right">
-              {todayDisplay && (
-                <span className={`text-sm font-medium ${todayDisplay.className}`}>
-                  {todayDisplay.label}
-                </span>
-              )}
-              {todayInsight.percentile != null && todayInsight.data_quality && (
-                <p className="text-xs text-neutral-400 mt-0.5">
-                  {todayInsight.percentile <= 50
-                    ? `${ordinal(Math.max(1, Math.round((1 - todayInsight.percentile / 100) * todayInsight.data_quality.coverage_years)))} coldest`
-                    : `${ordinal(Math.max(1, Math.round((todayInsight.percentile / 100) * todayInsight.data_quality.coverage_years)))} warmest`
-                  } out of {todayInsight.data_quality.coverage_years} years
-                </p>
-              )}
-            </div>
-          </div>
+      {/* Settings */}
+      <div>
+        <h2 className="text-xs font-medium text-neutral-400 uppercase tracking-wider mb-3">Settings</h2>
+        <div className="flex flex-wrap items-center gap-4">
+          <WindowSelector value={windowDays} onChange={setWindowDays} />
+          <IntervalSelector
+            value={sinceYear}
+            onChange={setSinceYear}
+            firstObsYear={
+              station?.first_obs_date
+                ? new Date(station.first_obs_date).getFullYear()
+                : null
+            }
+          />
         </div>
-      )}
-
-      {/* Window selector + Interval selector */}
-      <div className="flex flex-wrap items-center gap-4">
-        <WindowSelector value={windowDays} onChange={setWindowDays} />
-        <IntervalSelector
-          value={sinceYear}
-          onChange={setSinceYear}
-          firstObsYear={
-            station?.first_obs_date
-              ? new Date(station.first_obs_date).getFullYear()
-              : null
-          }
-        />
       </div>
 
       {/* Loading state */}
