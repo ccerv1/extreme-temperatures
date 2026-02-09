@@ -199,13 +199,8 @@ export default function Home() {
                 href={`/station/${s.station_id}`}
                 className="flex items-center rounded-lg px-3 py-1 hover:bg-neutral-50 transition-colors group"
               >
-                <span className="flex-1 min-w-0">
-                  <span className="block font-medium text-neutral-900 underline decoration-neutral-300 decoration-dashed underline-offset-2 group-hover:text-blue-600 group-hover:decoration-blue-400 transition-colors truncate">
-                    {s.city}
-                  </span>
-                  <span className="block text-xs text-neutral-400 truncate">
-                    {s.location}
-                  </span>
+                <span className="flex-1 font-medium text-neutral-900 underline decoration-neutral-300 decoration-dashed underline-offset-2 group-hover:text-blue-600 group-hover:decoration-blue-400 transition-colors truncate">
+                  {s.city}
                 </span>
                 <span className="w-20 text-right text-sm tabular-nums text-neutral-600">
                   {tempF != null ? `${tempF.toFixed(0)}°F` : "···"}
