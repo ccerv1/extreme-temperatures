@@ -120,6 +120,7 @@ export interface LatestInsight {
   window_days: number;
   metric: string;
   value: number | null;
+  normal_value: number | null;
   percentile: number | null;
   severity: string;
   direction: string;

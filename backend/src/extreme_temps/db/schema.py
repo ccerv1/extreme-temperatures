@@ -102,6 +102,7 @@ def create_all_tables(conn: duckdb.DuckDBPyConnection) -> None:
             end_date          DATE NOT NULL,
             metric            VARCHAR NOT NULL,
             value             DOUBLE,
+            normal_value      DOUBLE,
             percentile        DOUBLE,
             severity          VARCHAR NOT NULL,
             direction         VARCHAR NOT NULL,
@@ -124,7 +125,7 @@ def _migrate_latest_insight_table(conn: duckdb.DuckDBPyConnection) -> None:
             "WHERE table_name = 'fact_station_latest_insight'"
         ).fetchall()
         col_names = {c[0] for c in cols}
-        if col_names and "since_year" not in col_names:
+        if col_names and ("since_year" not in col_names or "normal_value" not in col_names):
             conn.execute("DROP TABLE fact_station_latest_insight")
     except Exception:
         pass

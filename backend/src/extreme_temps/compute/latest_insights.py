@@ -144,8 +144,10 @@ def _compute_single_window(
             quantiles = get_climatology_quantiles(conn, station_id, metric, window_days, end_doy)
 
         percentile = None
+        normal_value = None
         if quantiles is not None:
             percentile = get_percentile_for_value_from_quantiles(quantiles, float(value))
+            normal_value = quantiles.get("p50")
 
         # Coverage years: count from since_year
         coverage_years = date.today().year - since_year + 1
@@ -178,6 +180,7 @@ def _compute_single_window(
             "window_days": window_days,
             "metric": metric,
             "value": round(value, 2) if value is not None else None,
+            "normal_value": round(normal_value, 2) if normal_value is not None else None,
             "percentile": round(percentile, 1) if percentile is not None else None,
             "severity": severity.value,
             "direction": direction.value,

@@ -128,6 +128,7 @@ class LatestInsightItem(BaseModel):
     window_days: int
     metric: str
     value: float | None = None
+    normal_value: float | None = None
     percentile: float | None = None
     severity: str
     direction: str

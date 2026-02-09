@@ -11,6 +11,10 @@ function celsiusToFahrenheit(c: number): number {
   return c * 9 / 5 + 32;
 }
 
+function cToFDelta(c: number): number {
+  return c * 9 / 5;
+}
+
 const SEVERITY_LABELS: Record<string, Record<string, { label: string; className: string }>> = {
   cold: {
     extreme: { label: "Extremely Cold", className: "text-blue-700 font-semibold" },
@@ -46,10 +50,28 @@ function getSeverityDisplay(insight: LatestInsight): { label: string; className:
   return SEVERITY_LABELS[insight.direction]?.[insight.severity] ?? { label: "Near Normal", className: "text-neutral-400" };
 }
 
+type SortKey = "status" | "name" | "temp" | "deviation";
+
+function getDeviation(ins: LatestInsight | undefined): number | null {
+  if (!ins || ins.value == null || ins.normal_value == null) return null;
+  return ins.value - ins.normal_value;
+}
+
 export default function Home() {
   // Nested map: station_id → window_days → LatestInsight
   const [insightMap, setInsightMap] = useState<Record<string, Record<number, LatestInsight>>>({});
   const [selectedWindow, setSelectedWindow] = useState(7);
+  const [sortKey, setSortKey] = useState<SortKey>("status");
+  const [sortAsc, setSortAsc] = useState(true);
+
+  function handleSort(key: SortKey) {
+    if (sortKey === key) {
+      setSortAsc(!sortAsc);
+    } else {
+      setSortKey(key);
+      setSortAsc(key === "name"); // name defaults A→Z, others default desc
+    }
+  }
 
   useEffect(() => {
     fetchLatestInsights()
@@ -68,33 +90,48 @@ export default function Home() {
       });
   }, []);
 
-  // Sort stations: most extreme severity first, then by percentile distance from 50
   const sortedStations = useMemo(() => {
     return [...stations].sort((a, b) => {
       const insA = insightMap[a.station_id]?.[selectedWindow];
       const insB = insightMap[b.station_id]?.[selectedWindow];
 
-      // Stations without data go to bottom
+      // Stations without data always go to bottom
       if (!insA && !insB) return 0;
       if (!insA) return 1;
       if (!insB) return -1;
 
-      const sevA = SEVERITY_SORT_ORDER[insA.severity] ?? 5;
-      const sevB = SEVERITY_SORT_ORDER[insB.severity] ?? 5;
-      if (sevA !== sevB) return sevA - sevB;
+      let cmp = 0;
 
-      // Within same severity, group cold then warm
-      const dirOrder = (d: string) => d === "cold" ? 0 : d === "warm" ? 1 : 2;
-      const dirA = dirOrder(insA.direction);
-      const dirB = dirOrder(insB.direction);
-      if (dirA !== dirB) return dirA - dirB;
+      if (sortKey === "name") {
+        cmp = a.city.localeCompare(b.city);
+      } else if (sortKey === "temp") {
+        const tA = insA.value ?? -Infinity;
+        const tB = insB.value ?? -Infinity;
+        cmp = tA - tB;
+      } else if (sortKey === "deviation") {
+        const dA = getDeviation(insA) ?? -Infinity;
+        const dB = getDeviation(insB) ?? -Infinity;
+        cmp = dA - dB;
+      } else {
+        // status: severity order, then cold/warm, then percentile distance
+        const sevA = SEVERITY_SORT_ORDER[insA.severity] ?? 5;
+        const sevB = SEVERITY_SORT_ORDER[insB.severity] ?? 5;
+        if (sevA !== sevB) return sortAsc ? sevA - sevB : sevB - sevA;
 
-      // Within same severity+direction, sort by percentile distance from 50 (more extreme first)
-      const distA = insA.percentile != null ? Math.abs(insA.percentile - 50) : 0;
-      const distB = insB.percentile != null ? Math.abs(insB.percentile - 50) : 0;
-      return distB - distA;
+        const dirOrder = (d: string) => d === "cold" ? 0 : d === "warm" ? 1 : 2;
+        const dirA = dirOrder(insA.direction);
+        const dirB = dirOrder(insB.direction);
+        if (dirA !== dirB) return sortAsc ? dirA - dirB : dirB - dirA;
+
+        const distA = insA.percentile != null ? Math.abs(insA.percentile - 50) : 0;
+        const distB = insB.percentile != null ? Math.abs(insB.percentile - 50) : 0;
+        cmp = distB - distA;
+        return sortAsc ? cmp : -cmp;
+      }
+
+      return sortAsc ? cmp : -cmp;
     });
-  }, [insightMap, selectedWindow]);
+  }, [insightMap, selectedWindow, sortKey, sortAsc]);
 
   // Points for the distribution curve
   const distributionPoints = useMemo(() => {
@@ -111,6 +148,11 @@ export default function Home() {
   const outlierCount = distributionPoints.filter(
     (p) => p.severity !== "normal" && p.severity !== "insufficient_data"
   ).length;
+
+  const sortIndicator = (key: SortKey) => {
+    if (sortKey !== key) return "";
+    return sortAsc ? " ↑" : " ↓";
+  };
 
   return (
     <div className="space-y-5">
@@ -163,9 +205,30 @@ export default function Home() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-neutral-100 bg-neutral-50">
-              <th className="px-3 py-1.5 text-left text-xs font-medium text-neutral-400">Name</th>
-              <th className="px-3 py-1.5 text-right text-xs font-medium text-neutral-400 w-20">Avg Temp</th>
-              <th className="px-3 py-1.5 text-right text-xs font-medium text-neutral-400 w-36">Status</th>
+              <th
+                className="px-3 py-1.5 text-left text-xs font-medium text-neutral-400 cursor-pointer hover:text-neutral-600 select-none"
+                onClick={() => handleSort("name")}
+              >
+                Name{sortIndicator("name")}
+              </th>
+              <th
+                className="px-3 py-1.5 text-right text-xs font-medium text-neutral-400 w-20 cursor-pointer hover:text-neutral-600 select-none"
+                onClick={() => handleSort("temp")}
+              >
+                Avg Temp{sortIndicator("temp")}
+              </th>
+              <th
+                className="px-3 py-1.5 text-right text-xs font-medium text-neutral-400 w-24 cursor-pointer hover:text-neutral-600 select-none"
+                onClick={() => handleSort("deviation")}
+              >
+                vs Normal{sortIndicator("deviation")}
+              </th>
+              <th
+                className="px-3 py-1.5 text-right text-xs font-medium text-neutral-400 w-36 cursor-pointer hover:text-neutral-600 select-none"
+                onClick={() => handleSort("status")}
+              >
+                Status{sortIndicator("status")}
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -175,6 +238,8 @@ export default function Home() {
               const tempF = windowInsight?.value != null
                 ? celsiusToFahrenheit(windowInsight.value)
                 : null;
+              const deviationC = getDeviation(windowInsight);
+              const deviationF = deviationC != null ? cToFDelta(deviationC) : null;
 
               return (
                 <tr key={s.station_id} className="border-b border-neutral-50 last:border-0 hover:bg-neutral-50 transition-colors group">
@@ -188,6 +253,15 @@ export default function Home() {
                   </td>
                   <td className="px-3 py-1.5 text-right tabular-nums text-neutral-600">
                     {tempF != null ? `${tempF.toFixed(0)}°F` : "···"}
+                  </td>
+                  <td className={`px-3 py-1.5 text-right tabular-nums ${
+                    deviationF != null && deviationF < -0.5 ? "text-blue-600" :
+                    deviationF != null && deviationF > 0.5 ? "text-red-600" :
+                    "text-neutral-400"
+                  }`}>
+                    {deviationF != null
+                      ? `${deviationF >= 0 ? "+" : ""}${deviationF.toFixed(0)}°F`
+                      : "···"}
                   </td>
                   <td className={`px-3 py-1.5 text-right ${display?.className ?? "text-neutral-300"}`}>
                     {display?.label ?? "···"}

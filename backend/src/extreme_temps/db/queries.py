@@ -315,16 +315,17 @@ def upsert_latest_insight(conn: duckdb.DuckDBPyConnection, row: dict) -> None:
     """Insert or replace a precomputed latest insight for a station."""
     conn.execute("""
         INSERT OR REPLACE INTO fact_station_latest_insight (
-            station_id, window_days, end_date, metric, value, percentile,
-            severity, direction, primary_statement, supporting_line,
+            station_id, window_days, end_date, metric, value, normal_value,
+            percentile, severity, direction, primary_statement, supporting_line,
             coverage_years, first_year, since_year, computed_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, current_timestamp)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, current_timestamp)
     """, [
         row["station_id"],
         row["window_days"],
         row["end_date"],
         row["metric"],
         row.get("value"),
+        row.get("normal_value"),
         row.get("percentile"),
         row["severity"],
         row["direction"],
@@ -347,8 +348,8 @@ def get_all_latest_insights(
     """
     if window_days is not None:
         df = conn.execute("""
-            SELECT station_id, end_date, window_days, metric, value, percentile,
-                   severity, direction, primary_statement, supporting_line,
+            SELECT station_id, end_date, window_days, metric, value, normal_value,
+                   percentile, severity, direction, primary_statement, supporting_line,
                    coverage_years, first_year, since_year
             FROM fact_station_latest_insight
             WHERE window_days = ?
@@ -356,8 +357,8 @@ def get_all_latest_insights(
         """, [window_days]).fetchdf()
     else:
         df = conn.execute("""
-            SELECT station_id, end_date, window_days, metric, value, percentile,
-                   severity, direction, primary_statement, supporting_line,
+            SELECT station_id, end_date, window_days, metric, value, normal_value,
+                   percentile, severity, direction, primary_statement, supporting_line,
                    coverage_years, first_year, since_year
             FROM fact_station_latest_insight
             ORDER BY station_id, window_days
