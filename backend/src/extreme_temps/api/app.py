@@ -40,7 +40,7 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
-    from extreme_temps.api.routers import stations, insights, series, records, rankings, latest_insights
+    from extreme_temps.api.routers import stations, insights, series, records, rankings, latest_insights, manage
 
     app.include_router(stations.router, prefix="/stations", tags=["stations"])
     app.include_router(insights.router, prefix="/insights", tags=["insights"])
@@ -48,6 +48,7 @@ def create_app() -> FastAPI:
     app.include_router(series.router, prefix="/series", tags=["series"])
     app.include_router(records.router, prefix="/records", tags=["records"])
     app.include_router(rankings.router, prefix="/rankings", tags=["rankings"])
+    app.include_router(manage.router, prefix="/manage", tags=["manage"])
 
     @app.get("/health")
     def health():
