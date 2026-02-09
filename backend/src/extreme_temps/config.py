@@ -1,10 +1,11 @@
+import os
 from pathlib import Path
 
 # Paths
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 DATA_DIR = PROJECT_ROOT / "data"
-DB_PATH = DATA_DIR / "extreme_temps.duckdb"
-STATIONS_JSON = DATA_DIR / "stations.json"
+DB_PATH = Path(os.environ.get("DATABASE_PATH", str(DATA_DIR / "extreme_temps.duckdb")))
+STATIONS_JSON = Path(os.environ.get("STATIONS_JSON", str(DATA_DIR / "stations.json")))
 
 # GHCN Daily
 GHCN_BASE_URL = "https://www.ncei.noaa.gov/data/global-historical-climatology-network-daily/access/"

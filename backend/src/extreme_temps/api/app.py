@@ -29,10 +29,12 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
 
-    # CORS for frontend dev
+    # CORS
+    import os
+    cors_origins = os.environ.get("CORS_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000")
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+        allow_origins=[o.strip() for o in cors_origins.split(",")],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],

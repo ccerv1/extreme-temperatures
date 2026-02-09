@@ -40,11 +40,13 @@ def main() -> None:
 
 
 def _serve() -> None:
+    import os
     try:
         import uvicorn
         from extreme_temps.api.app import create_app  # noqa: F401
 
-        uvicorn.run("extreme_temps.api.app:create_app", factory=True, host="0.0.0.0", port=8000, reload=True)
+        port = int(os.environ.get("PORT", "8000"))
+        uvicorn.run("extreme_temps.api.app:create_app", factory=True, host="0.0.0.0", port=port)
     except ImportError as e:
         print(f"Missing dependency: {e}", file=sys.stderr)
         sys.exit(1)
