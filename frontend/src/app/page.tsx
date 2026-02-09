@@ -11,11 +11,6 @@ function celsiusToFahrenheit(c: number): number {
   return c * 9 / 5 + 32;
 }
 
-function formatDate(dateStr: string): string {
-  const d = new Date(dateStr + "T12:00:00");
-  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-}
-
 const SEVERITY_LABELS: Record<string, Record<string, { label: string; className: string }>> = {
   cold: {
     extreme: { label: "Extremely Cold", className: "text-blue-700 font-semibold" },
@@ -72,16 +67,6 @@ export default function Home() {
         // API not available — show empty state
       });
   }, []);
-
-  // Derive the date label from window=1 data
-  const dateLabel = useMemo(() => {
-    const firstStation = Object.values(insightMap)[0];
-    const todayInsight = firstStation?.[1];
-    if (todayInsight?.end_date) {
-      return formatDate(todayInsight.end_date);
-    }
-    return "Temp";
-  }, [insightMap]);
 
   // Sort stations: most extreme severity first, then by percentile distance from 50
   const sortedStations = useMemo(() => {
@@ -179,7 +164,7 @@ export default function Home() {
           <thead>
             <tr className="border-b border-neutral-100 bg-neutral-50">
               <th className="px-3 py-1.5 text-left text-xs font-medium text-neutral-400">Name</th>
-              <th className="px-3 py-1.5 text-right text-xs font-medium text-neutral-400 w-20">{dateLabel}</th>
+              <th className="px-3 py-1.5 text-right text-xs font-medium text-neutral-400 w-20">Temp</th>
               <th className="px-3 py-1.5 text-right text-xs font-medium text-neutral-400 w-36">Status</th>
             </tr>
           </thead>
