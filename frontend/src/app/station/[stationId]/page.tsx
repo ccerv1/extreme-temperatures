@@ -213,9 +213,12 @@ export default function StationPage() {
                   {todayDisplay.label}
                 </span>
               )}
-              {todayInsight.percentile != null && (
+              {todayInsight.percentile != null && todayInsight.data_quality && (
                 <p className="text-xs text-neutral-400 mt-0.5">
-                  {ordinal(Math.round(todayInsight.percentile))} percentile
+                  {todayInsight.percentile <= 50
+                    ? `${ordinal(Math.max(1, Math.round((1 - todayInsight.percentile / 100) * todayInsight.data_quality.coverage_years)))} coldest`
+                    : `${ordinal(Math.max(1, Math.round((todayInsight.percentile / 100) * todayInsight.data_quality.coverage_years)))} warmest`
+                  } out of {todayInsight.data_quality.coverage_years} years
                 </p>
               )}
             </div>

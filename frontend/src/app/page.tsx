@@ -134,7 +134,7 @@ export default function Home() {
           Tempercentiles
         </h1>
         <p className="mt-1 text-sm text-neutral-500">
-          How unusual are current temperatures? Each station is compared against its own historical record, updated daily.
+          How <em className="not-italic font-medium">extreme</em> are current temperatures? Each city&#8217;s recent temperatures are compared against its historical record for the same period.
         </p>
       </div>
 

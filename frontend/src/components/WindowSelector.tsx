@@ -1,14 +1,14 @@
 "use client";
 
 const PRESETS = [
-  { days: 3, label: "3 days" },
   { days: 7, label: "7 days" },
+  { days: 14, label: "14 days" },
   { days: 30, label: "30 days" },
 ];
 
 const PRESET_DAYS = new Set(PRESETS.map((p) => p.days));
 
-const DROPDOWN_WINDOWS = [5, 10, 14, 21, 28, 45, 60, 75, 90, 180, 365];
+const DROPDOWN_WINDOWS = [3, 5, 10, 21, 28, 45, 60, 75, 90, 180, 365];
 
 interface Props {
   value: number;
