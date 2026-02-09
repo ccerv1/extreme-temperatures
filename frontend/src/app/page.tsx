@@ -128,7 +128,7 @@ export default function Home() {
   ).length;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-5">
       <div>
         <h1 className="text-3xl font-semibold tracking-tight">
           Tempercentiles
@@ -169,10 +169,12 @@ export default function Home() {
 
       {/* Distribution curve */}
       {distributionPoints.length > 0 && (
-        <DistributionCurve points={distributionPoints} />
+        <div className="-mt-2">
+          <DistributionCurve points={distributionPoints} />
+        </div>
       )}
 
-      <div>
+      <div className="-mt-2">
 
         {/* Column headers */}
         <div className="flex items-center px-3 py-1.5 text-xs text-neutral-400">
@@ -195,7 +197,7 @@ export default function Home() {
               <Link
                 key={s.station_id}
                 href={`/station/${s.station_id}`}
-                className="flex items-center rounded-lg px-3 py-1.5 hover:bg-neutral-50 transition-colors group"
+                className="flex items-center rounded-lg px-3 py-1 hover:bg-neutral-50 transition-colors group"
               >
                 <span className="flex-1 min-w-0">
                   <span className="block font-medium text-neutral-900 underline decoration-neutral-300 decoration-dashed underline-offset-2 group-hover:text-blue-600 group-hover:decoration-blue-400 transition-colors truncate">
