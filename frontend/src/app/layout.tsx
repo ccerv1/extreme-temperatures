@@ -8,8 +8,8 @@ const geist = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "Extreme Temperatures",
-  description: "How unusual is this weather compared to history?",
+  title: "Tempercentiles",
+  description: "Daily temperatures in historical context for 50 US cities",
 };
 
 export default function RootLayout({
@@ -18,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" style={{ colorScheme: "light" }}>
       <body className={`${geist.variable} font-sans antialiased bg-white text-neutral-900`}>
         <main className="mx-auto max-w-4xl px-4 py-8">{children}</main>
       </body>

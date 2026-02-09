@@ -125,10 +125,10 @@ export default function Home() {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-semibold tracking-tight">
-          Extreme Temperatures
+          Tempercentiles
         </h1>
         <p className="mt-1 text-sm text-neutral-500">
-          How unusual is this weather compared to history?
+          Daily temperatures in historical context for 50 US cities
         </p>
       </div>
 
