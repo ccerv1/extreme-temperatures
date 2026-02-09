@@ -60,7 +60,7 @@ export default function ExtremesRankingTable({ data }: { data: ExtremesRanking }
       <h3 className="text-xs font-medium text-neutral-400 uppercase tracking-wider mb-3">
         Most extreme {isCold ? "cold" : "warm"} periods — same time of year
       </h3>
-      <div className="rounded-lg border border-neutral-200 overflow-hidden">
+      <div className="rounded-lg border border-neutral-200 overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-neutral-100 bg-neutral-50">
