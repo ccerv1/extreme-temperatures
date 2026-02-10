@@ -10,7 +10,11 @@ from fastapi import APIRouter, Depends, Request
 import duckdb
 
 from extreme_temps.api.deps import get_db
-from extreme_temps.ingest.orchestrator import ingest_all_stations_incremental
+from extreme_temps.ingest.orchestrator import ingest_all_stations_incremental, ingest_station_full
+from extreme_temps.ingest.stations import seed_stations
+from extreme_temps.compute.climatology import compute_climatology_quantiles
+from extreme_temps.compute.records import compute_all_records
+from extreme_temps.compute.rolling_windows import compute_recent_windows
 from extreme_temps.compute.latest_insights import compute_latest_insights_multi
 
 logger = logging.getLogger(__name__)
@@ -116,6 +120,62 @@ def get_refresh_status() -> dict:
             "running": _refresh_status["running"],
             "last_result": _refresh_status["last_result"],
         }
+
+
+@router.post("/backfill/{station_id}")
+def trigger_backfill(station_id: str, request: Request) -> dict:
+    """Full historical backfill for a single station.
+
+    Runs synchronously: ingest, climatology, records, rolling windows, insights.
+    Use for newly added stations that have no data yet.
+    """
+    conn = request.app.state.db
+    cursor = conn.cursor()
+    t0 = time.time()
+
+    try:
+        # Ensure station is in dim_station
+        seed_stations(cursor)
+
+        # Look up wban from dim_station
+        row = cursor.execute(
+            "SELECT wban FROM dim_station WHERE station_id = ?", [station_id]
+        ).fetchone()
+        if row is None:
+            return {"status": "error", "detail": f"Station {station_id} not found in registry"}
+        wban = row[0]
+
+        # 1. Full historical ingest
+        result = ingest_station_full(cursor, station_id, wban=wban)
+        if result.rows_inserted == 0:
+            return {"status": "error", "detail": "No data returned from GHCN", "errors": result.errors}
+
+        # 2. Climatology quantiles
+        for w in [1, 3, 5, 7, 10, 14, 21, 28, 30, 45, 60, 90]:
+            compute_climatology_quantiles(cursor, station_id, "tavg_c", w, 7)
+
+        # 3. Records
+        compute_all_records(cursor, station_id)
+
+        # 4. Recent rolling windows
+        compute_recent_windows(cursor, station_id)
+
+        # 5. Latest insights
+        insights = compute_latest_insights_multi(cursor, station_id)
+
+        cursor.close()
+        duration = round(time.time() - t0, 1)
+        return {
+            "status": "completed",
+            "station_id": station_id,
+            "rows_ingested": result.rows_inserted,
+            "insights_computed": len(insights),
+            "duration_s": duration,
+        }
+    except Exception:
+        logger.exception("Backfill failed for %s", station_id)
+        cursor.close()
+        return {"status": "error", "detail": "See server logs", "duration_s": round(time.time() - t0, 1)}
 
 
 @router.get("/last-updated")
