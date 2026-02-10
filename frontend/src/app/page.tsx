@@ -279,7 +279,7 @@ export default function Home() {
 
       {lastUpdated && (
         <p className="text-xs text-neutral-400 text-center">
-          Data updated {new Date(lastUpdated).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" })}
+          Data updated {new Date(lastUpdated + "Z").toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" })}
         </p>
       )}
     </div>

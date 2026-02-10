@@ -119,15 +119,18 @@ export default function DistributionCurve({ points }: { points: StationDot[] }) 
         className="flex mt-1"
         style={{ marginLeft: SIDE_PAD, marginRight: SIDE_PAD }}
       >
-        {ZONES.map((z) => (
-          <div
-            key={z.from}
-            className={`text-center text-[9px] leading-tight font-medium ${z.text}`}
-            style={{ flex: z.to - z.from }}
-          >
-            {z.label}
-          </div>
-        ))}
+        {ZONES.map((z) => {
+          const isUnusual = z.label.startsWith("Unusually");
+          return (
+            <div
+              key={z.from}
+              className={`text-center text-[9px] leading-tight font-medium ${z.text} ${isUnusual ? "hidden sm:block" : ""}`}
+              style={{ flex: z.to - z.from }}
+            >
+              {z.label}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
