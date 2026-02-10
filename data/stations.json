@@ -48,5 +48,6 @@
   {"station_id": "USW00013740", "wban": "013740", "name": "Richmond International Airport", "city": "Richmond", "location": "RIC Airport", "lat": 37.5053, "lon": -77.3197, "elevation_m": 50.0},
   {"station_id": "USW00013994", "wban": "013994", "name": "St Louis Lambert International Airport", "city": "St. Louis", "location": "Lambert Airport", "lat": 38.7525, "lon": -90.3736, "elevation_m": 172.0},
   {"station_id": "USW00014820", "wban": "014820", "name": "Cleveland Hopkins International Airport", "city": "Cleveland", "location": "Hopkins Airport", "lat": 41.4117, "lon": -81.8497, "elevation_m": 241.4},
-  {"station_id": "USW00094789", "wban": "094789", "name": "New York JFK International Airport", "city": "New York (JFK)", "location": "JFK Airport", "lat": 40.6386, "lon": -73.7622, "elevation_m": 3.4}
+  {"station_id": "USW00094789", "wban": "094789", "name": "New York JFK International Airport", "city": "New York (JFK)", "location": "JFK Airport", "lat": 40.6386, "lon": -73.7622, "elevation_m": 3.4},
+  {"station_id": "USW00024225", "wban": "024225", "name": "Medford Rogue Valley International Airport", "city": "Medford", "location": "MFR Airport", "lat": 42.3750, "lon": -122.8770, "elevation_m": 400.3}
 ]
