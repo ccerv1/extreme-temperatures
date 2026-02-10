@@ -6,9 +6,10 @@ import logging
 import threading
 import time
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Depends, Request
 import duckdb
 
+from extreme_temps.api.deps import get_db
 from extreme_temps.ingest.orchestrator import ingest_all_stations_incremental
 from extreme_temps.compute.latest_insights import compute_latest_insights_multi
 
@@ -115,3 +116,12 @@ def get_refresh_status() -> dict:
             "running": _refresh_status["running"],
             "last_result": _refresh_status["last_result"],
         }
+
+
+@router.get("/last-updated")
+def get_last_updated(db: duckdb.DuckDBPyConnection = Depends(get_db)) -> dict:
+    """Return the timestamp of the most recent data computation."""
+    row = db.execute(
+        "SELECT MAX(computed_at) AS last_updated FROM fact_station_latest_insight"
+    ).fetchone()
+    return {"last_updated": row[0].isoformat() if row and row[0] else None}

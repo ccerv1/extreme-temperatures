@@ -3,7 +3,7 @@
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import stations from "@/data/stations.json";
-import { fetchLatestInsights } from "@/lib/api";
+import { fetchLatestInsights, fetchLastUpdated } from "@/lib/api";
 import type { LatestInsight } from "@/types";
 import DistributionCurve from "@/components/DistributionCurve";
 
@@ -63,6 +63,7 @@ export default function Home() {
   const [selectedWindow, setSelectedWindow] = useState(7);
   const [sortKey, setSortKey] = useState<SortKey>("status");
   const [sortAsc, setSortAsc] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState<string | null>(null);
 
   function handleSort(key: SortKey) {
     if (sortKey === key) {
@@ -88,6 +89,9 @@ export default function Home() {
       .catch(() => {
         // API not available — show empty state
       });
+    fetchLastUpdated()
+      .then(setLastUpdated)
+      .catch(() => {});
   }, []);
 
   const sortedStations = useMemo(() => {
@@ -272,6 +276,12 @@ export default function Home() {
           </tbody>
         </table>
       </div>
+
+      {lastUpdated && (
+        <p className="text-xs text-neutral-400 text-center">
+          Data updated {new Date(lastUpdated).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" })}
+        </p>
+      )}
     </div>
   );
 }

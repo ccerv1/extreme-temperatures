@@ -108,3 +108,8 @@ export async function fetchExtremesRankings(
 export async function fetchLatestInsights(): Promise<LatestInsight[]> {
   return fetchJSON<LatestInsight[]>("/insights/latest");
 }
+
+export async function fetchLastUpdated(): Promise<string | null> {
+  const data = await fetchJSON<{ last_updated: string | null }>("/manage/last-updated");
+  return data.last_updated;
+}

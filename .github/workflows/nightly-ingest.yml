@@ -63,3 +63,32 @@ jobs:
           name: extreme-temps-db
           path: data/extreme_temps.duckdb
           retention-days: 90
+
+      - name: Refresh production data
+        env:
+          API_URL: https://extreme-temperatures-production.up.railway.app
+        run: |
+          echo "Triggering production refresh..."
+          curl -sf -X POST "$API_URL/manage/refresh"
+
+          # Poll until complete (timeout after 15 min)
+          for i in $(seq 1 90); do
+            sleep 10
+            STATUS=$(curl -sf "$API_URL/manage/refresh-status")
+            RUNNING=$(echo "$STATUS" | python3 -c "import sys,json; print(json.load(sys.stdin)['running'])")
+            if [ "$RUNNING" = "False" ]; then
+              echo "Refresh complete:"
+              echo "$STATUS" | python3 -m json.tool
+              RESULT=$(echo "$STATUS" | python3 -c "import sys,json; print(json.load(sys.stdin).get('last_result',{}).get('status','unknown'))")
+              if [ "$RESULT" = "completed" ]; then
+                echo "Production refresh succeeded"
+                exit 0
+              else
+                echo "Production refresh failed"
+                exit 1
+              fi
+            fi
+            echo "Still running... ($((i * 10))s)"
+          done
+          echo "Timed out waiting for refresh"
+          exit 1
