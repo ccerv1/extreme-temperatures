@@ -95,12 +95,11 @@ def ingest_station_incremental(
     ghcn_df = fetch_ghcn_daily(station_id, start_date=start)
     if ghcn_df.empty:
         logger.info("No new GHCN data for %s since %s", station_id, start)
-        return result
-
-    count = upsert_daily_observations(conn, station_id, ghcn_df, source="ghcn_daily")
-    result.rows_inserted = count
-    result.source = "ghcn_daily"
-    logger.info("Incremental: inserted %d rows for %s", count, station_id)
+    else:
+        count = upsert_daily_observations(conn, station_id, ghcn_df, source="ghcn_daily")
+        result.rows_inserted = count
+        result.source = "ghcn_daily"
+        logger.info("Incremental: inserted %d rows for %s", count, station_id)
 
     # Fill recent gap with Open-Meteo (GHCN has 3-5 day lag)
     _fill_recent_from_open_meteo(conn, station_id, station, result)
