@@ -102,8 +102,8 @@ railway up --detach
 # Deploy frontend to Vercel (auto-deploys on push, or manually)
 cd frontend && vercel --yes --prod
 
-# Trigger production data refresh
-curl -X POST https://extreme-temperatures-production.up.railway.app/insights/compute-latest
+# Backfill the new station on production (full pipeline)
+curl -X POST https://extreme-temperatures-production.up.railway.app/manage/backfill/USW00024225
 ```
 
 ## Data Sources
