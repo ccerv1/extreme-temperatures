@@ -61,7 +61,12 @@ def ingest_station_full(
     if wban:
         _fill_gaps_from_gsod(conn, station_id, wban, result)
 
-    # Step 3: Update coverage stats
+    # Step 3: Open-Meteo fill for recent days (GHCN has 3-5 day lag)
+    station = get_station(conn, station_id)
+    if station is not None:
+        _fill_recent_from_open_meteo(conn, station_id, station, result)
+
+    # Step 4: Update coverage stats
     update_station_coverage(conn, station_id)
 
     return result
